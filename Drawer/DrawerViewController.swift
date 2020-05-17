@@ -22,30 +22,13 @@ class DrawerViewController : UIViewController, UIGestureRecognizerDelegate {
         }
     }
     
-    @IBOutlet private var playerView: UIView!
+    @IBOutlet private var playerContainerView: UIView!
     @IBOutlet private var miniPlayerView: UIView!
+    @IBOutlet private var playerView: UIView!
+    @IBOutlet private var tapHandlerView: UIView!
     @IBOutlet private var bottomConstraint: NSLayoutConstraint!
     @IBOutlet private var heightConstraint: NSLayoutConstraint!
 
-    private lazy var closedTitleLabel: UILabel = {
-        let label = UILabel()
-        label.text = "Closed"
-        label.font = UIFont.systemFont(ofSize: 16, weight: UIFont.Weight.medium)
-        label.textColor = #colorLiteral(red: 1, green: 1, blue: 1, alpha: 1)
-        label.textAlignment = .center
-        return label
-    }()
-    
-    private lazy var openTitleLabel: UILabel = {
-        let label = UILabel()
-        label.text = "Open"
-        label.font = UIFont.systemFont(ofSize: 24, weight: UIFont.Weight.heavy)
-        label.textColor = .black
-        label.textAlignment = .center
-        label.alpha = 0
-        label.transform = CGAffineTransform(scaleX: 0.65, y: 0.65).concatenating(CGAffineTransform(translationX: 0, y: -15))
-        return label
-    }()
     private lazy var panGestureRecognizer: UIPanGestureRecognizer = {
         let recognizer = UIPanGestureRecognizer()
         recognizer.addTarget(self, action: #selector(popupViewPanned(recognizer:)))
@@ -71,12 +54,9 @@ class DrawerViewController : UIViewController, UIGestureRecognizerDelegate {
     private var popupTopInset: CGFloat { view.safeAreaInsets.top + 24 }
     private var popupCollapsedHeight: CGFloat { miniPlayerView.bounds.height }
     private var popupCollapsedButtomInset: CGFloat { popupCollapsedHeight + popupBottomInset - popupFullHeight }
-    private let animationDuration = TimeInterval(0.6)
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-//        setupUI()
-    }
+    private let showPlayerAnimationDuration = TimeInterval(0.6)
+    private var miniPlayerAnimationDuration: TimeInterval { return showPlayerAnimationDuration * 0.2 }
+    private var playerAnimationDuration: TimeInterval { return showPlayerAnimationDuration * 0.1 }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
@@ -85,33 +65,21 @@ class DrawerViewController : UIViewController, UIGestureRecognizerDelegate {
     
     private func setupUI() {
         view.backgroundColor = .clear
-        playerView.layer.maskedCorners = [.layerMaxXMinYCorner, .layerMinXMinYCorner]
+        playerContainerView.layer.maskedCorners = [.layerMaxXMinYCorner, .layerMinXMinYCorner]
         bottomConstraint.constant = popupCollapsedButtomInset
         heightConstraint.constant = popupFullHeight
-        playerView.addGestureRecognizer(panGestureRecognizer)
-        miniPlayerView.addGestureRecognizer(tapGestureRecognizer)
-        
-        closedTitleLabel.translatesAutoresizingMaskIntoConstraints = false
-        miniPlayerView.addSubview(closedTitleLabel)
-        closedTitleLabel.centerYAnchor.constraint(equalTo: miniPlayerView.centerYAnchor).isActive = true
-        closedTitleLabel.centerXAnchor.constraint(equalTo: miniPlayerView.centerXAnchor).isActive = true
-        
-        openTitleLabel.translatesAutoresizingMaskIntoConstraints = false
-        miniPlayerView.addSubview(openTitleLabel)
-        openTitleLabel.centerYAnchor.constraint(equalTo: miniPlayerView.centerYAnchor).isActive = true
-        openTitleLabel.centerXAnchor.constraint(equalTo: miniPlayerView.centerXAnchor).isActive = true
-        
-        view.layoutIfNeeded()
+        playerContainerView.addGestureRecognizer(panGestureRecognizer)
+        tapHandlerView.addGestureRecognizer(tapGestureRecognizer)
     }
     
     @objc private func popupViewPanned(recognizer: UIPanGestureRecognizer) {
         switch recognizer.state {
         case .began:
-            runningAnimators = createAnimations(for: currentState.reversed, duration: animationDuration)
-            runningAnimators.startAnimations()
+            runningAnimators = createAnimations(for: currentState.reversed)
+            startAnimations(for: currentState.reversed)
             runningAnimators.pauseAnimations()
         case .changed:
-            let translation = recognizer.translation(in: playerView)
+            let translation = recognizer.translation(in: playerContainerView)
             var fraction = -translation.y / popupCollapsedButtomInset
             if currentState == .closed { fraction *= -1 }
             runningAnimators.fractionComplete = fraction
@@ -127,18 +95,34 @@ class DrawerViewController : UIViewController, UIGestureRecognizerDelegate {
     }
     
     @objc private func popupViewTapped(recognizer: UITapGestureRecognizer) {
-        // ensure that the animators array is empty (which implies new animations need to be created)
-        guard runningAnimators.isEmpty else { return }
-        
-        runningAnimators = createAnimations(for: currentState.reversed, duration: animationDuration)
+        runningAnimators = createAnimations(for: currentState.reversed)
+        startAnimations(for: currentState.reversed)
+    }
+    
+    private func startAnimations(for finalState: State) {
+//        switch finalState {
+//        case .open:
+//            runningAnimators[0].startAnimation()
+//            runningAnimators[1].startAnimation()
+//            runningAnimators[2].startAnimation(afterDelay: miniPlayerAnimationDuration)
+//        case .closed:
+//            runningAnimators[0].startAnimation()
+//            runningAnimators[1].startAnimation(afterDelay: showPlayerAnimationDuration - miniPlayerAnimationDuration)
+//            runningAnimators[2].startAnimation(afterDelay: showPlayerAnimationDuration - miniPlayerAnimationDuration - playerAnimationDuration)
+//        }
         runningAnimators.startAnimations()
     }
     
-    private func createAnimations(for finalState: State, duration: TimeInterval) -> [UIViewPropertyAnimator] {
+    private func createAnimations(for finalState: State) -> [UIViewPropertyAnimator] {
+//        return [
+//            transitionAnimator(for: currentState.reversed, duration: showPlayerAnimationDuration),
+//            miniPlayerAnimator(for: currentState.reversed, duration: miniPlayerAnimationDuration),
+//            playerContentAnimator(for: currentState.reversed, duration: playerAnimationDuration)
+//        ]
         return [
-            transitionAnimator(for: currentState.reversed, duration: animationDuration),
-            inTitleAnimator(for: currentState.reversed, duration: animationDuration),
-            outTitleAnimator(for: currentState.reversed, duration: animationDuration)
+            transitionAnimator(for: currentState.reversed, duration: showPlayerAnimationDuration),
+            miniPlayerAnimator(for: currentState.reversed, duration: showPlayerAnimationDuration),
+            playerContentAnimator(for: currentState.reversed, duration: showPlayerAnimationDuration)
         ]
     }
     
@@ -157,27 +141,26 @@ class DrawerViewController : UIViewController, UIGestureRecognizerDelegate {
         return transitionAnimator
     }
     
-    // an animator for the title that is transitioning into view
-    private func inTitleAnimator(for finalState: State, duration: TimeInterval) ->  UIViewPropertyAnimator {
-        let inTitleAnimator = UIViewPropertyAnimator(duration: duration, curve: .easeIn, animations: {
+    private func miniPlayerAnimator(for finalState: State, duration: TimeInterval) ->  UIViewPropertyAnimator {
+        let miniPlayerAnimator = UIViewPropertyAnimator(duration: duration, curve: .easeOut, animations: {
             switch finalState {
             case .open:
-                self.openTitleLabel.alpha = 1
+                self.miniPlayerView.alpha = 0
             case .closed:
-                self.closedTitleLabel.alpha = 1
+                self.miniPlayerView.alpha = 1
             }
         })
-        inTitleAnimator.scrubsLinearly = false
-        return inTitleAnimator
+        miniPlayerAnimator.scrubsLinearly = false
+        return miniPlayerAnimator
     }
-    private func outTitleAnimator(for finalState: State, duration: TimeInterval) ->  UIViewPropertyAnimator {
-        // an animator for the title that is transitioning out of view
-        let outTitleAnimator = UIViewPropertyAnimator(duration: duration, curve: .easeOut, animations: {
+    
+    private func playerContentAnimator(for finalState: State, duration: TimeInterval) ->  UIViewPropertyAnimator {
+        let outTitleAnimator = UIViewPropertyAnimator(duration: duration, curve: .easeIn, animations: {
             switch finalState {
             case .open:
-                self.closedTitleLabel.alpha = 0
+                self.playerView.alpha = 1
             case .closed:
-                self.openTitleLabel.alpha = 0
+                self.playerView.alpha = 0
             }
         })
         outTitleAnimator.scrubsLinearly = false
@@ -187,27 +170,7 @@ class DrawerViewController : UIViewController, UIGestureRecognizerDelegate {
     private func updateUI(with state: State) {
         view.backgroundColor = color(from: state)
         bottomConstraint.constant = bottomOffset(from: state)
-        playerView.layer.cornerRadius = cornerRadius(from: state)
-        closedTitleLabel.transform = closedTitleLabelTransform(from: state)
-        openTitleLabel.transform = openTitleLabelTransform(from: state)
-    }
-    
-    private func closedTitleLabelTransform(from state: State) -> CGAffineTransform {
-        switch state {
-        case .open:
-            return CGAffineTransform(scaleX: 1.6, y: 1.6).concatenating(CGAffineTransform(translationX: 0, y: 15))
-        case .closed:
-            return .identity
-        }
-    }
-    
-    private func openTitleLabelTransform(from state: State) -> CGAffineTransform {
-        switch state {
-        case .open:
-            return .identity
-        case .closed:
-            return CGAffineTransform(scaleX: 0.65, y: 0.65).concatenating(CGAffineTransform(translationX: 0, y: -15))
-        }
+        playerContainerView.layer.cornerRadius = cornerRadius(from: state)
     }
     
     private func finalState(from initialState: State, position: UIViewAnimatingPosition) -> State {
