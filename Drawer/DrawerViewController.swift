@@ -8,9 +8,18 @@
 
 import UIKit
 
+protocol DrawerViewControllerDelegate: class {
+    func didTriggerStateChange(to state: DrawerViewController.State)
+    
+    func didStartStateChange(to state: DrawerViewController.State)
+    func didProgressStateChange(to state: DrawerViewController.State, fraction: CGFloat)
+    func didContinueStateChange(to state: DrawerViewController.State)
+    func didFinishStateChange(to state: DrawerViewController.State)
+}
+
 class DrawerViewController : UIViewController, UIGestureRecognizerDelegate {
     
-    private enum State {
+    enum State: Equatable {
         case closed
         case open
         
@@ -25,9 +34,6 @@ class DrawerViewController : UIViewController, UIGestureRecognizerDelegate {
     @IBOutlet private var playerContainerView: UIView!
     @IBOutlet private var miniPlayerView: UIView!
     @IBOutlet private var playerView: UIView!
-    @IBOutlet private var tapHandlerView: UIView!
-    @IBOutlet private var bottomConstraint: NSLayoutConstraint!
-    @IBOutlet private var heightConstraint: NSLayoutConstraint!
 
     private lazy var panGestureRecognizer: UIPanGestureRecognizer = {
         let recognizer = UIPanGestureRecognizer()
@@ -48,12 +54,9 @@ class DrawerViewController : UIViewController, UIGestureRecognizerDelegate {
             print("current state: \(currentState)")
         }
     }
+    weak var delegate: DrawerViewControllerDelegate?
     
-    private var popupFullHeight : CGFloat { view.bounds.height - popupTopInset }
-    private var popupBottomInset: CGFloat { view.safeAreaInsets.bottom } // extend background to safe area
-    private var popupTopInset: CGFloat { view.safeAreaInsets.top + 24 }
-    private var popupCollapsedHeight: CGFloat { miniPlayerView.bounds.height }
-    private var popupCollapsedButtomInset: CGFloat { popupCollapsedHeight + popupBottomInset - popupFullHeight }
+    private var popupCollapsedButtomInset: CGFloat { playerContainerView.bounds.height - view.safeAreaInsets.bottom  - miniPlayerView.bounds.height - 100}
     private let showPlayerAnimationDuration = TimeInterval(0.6)
     private var miniPlayerAnimationDuration: TimeInterval { return showPlayerAnimationDuration * 0.2 }
     private var playerAnimationDuration: TimeInterval { return showPlayerAnimationDuration * 0.1 }
@@ -66,10 +69,9 @@ class DrawerViewController : UIViewController, UIGestureRecognizerDelegate {
     private func setupUI() {
         view.backgroundColor = .clear
         playerContainerView.layer.maskedCorners = [.layerMaxXMinYCorner, .layerMinXMinYCorner]
-        bottomConstraint.constant = popupCollapsedButtomInset
-        heightConstraint.constant = popupFullHeight
         playerContainerView.addGestureRecognizer(panGestureRecognizer)
-        tapHandlerView.addGestureRecognizer(tapGestureRecognizer)
+        playerContainerView.addGestureRecognizer(tapGestureRecognizer)
+        updateUI(with: .closed)
     }
     
     @objc private func popupViewPanned(recognizer: UIPanGestureRecognizer) {
@@ -78,13 +80,19 @@ class DrawerViewController : UIViewController, UIGestureRecognizerDelegate {
             runningAnimators = createAnimations(for: currentState.reversed)
             startAnimations(for: currentState.reversed)
             runningAnimators.pauseAnimations()
+            
+            delegate?.didStartStateChange(to: currentState.reversed)
         case .changed:
             let translation = recognizer.translation(in: playerContainerView)
             var fraction = -translation.y / popupCollapsedButtomInset
-            if currentState == .closed { fraction *= -1 }
+            if currentState == .open { fraction *= -1 }
             runningAnimators.fractionComplete = fraction
+            
+            delegate?.didProgressStateChange(to: currentState.reversed, fraction: fraction)
         case .ended:
             runningAnimators.continueAnimations()
+            
+            delegate?.didContinueStateChange(to: currentState.reversed)
         default:
             ()
         }
@@ -95,8 +103,10 @@ class DrawerViewController : UIViewController, UIGestureRecognizerDelegate {
     }
     
     @objc private func popupViewTapped(recognizer: UITapGestureRecognizer) {
+        guard miniPlayerView.frame.contains(recognizer.location(in: self.playerContainerView)) else { return }
         runningAnimators = createAnimations(for: currentState.reversed)
         startAnimations(for: currentState.reversed)
+        delegate?.didTriggerStateChange(to: currentState.reversed)
     }
     
     private func startAnimations(for finalState: State) {
@@ -135,6 +145,8 @@ class DrawerViewController : UIViewController, UIGestureRecognizerDelegate {
             self.currentState = self.finalState(from: finalState.reversed, position: position)
             self.updateUI(with: self.currentState)
             
+            self.delegate?.didFinishStateChange(to: self.currentState)
+            
             // remove all running animators
             self.runningAnimators.removeAll()
         }
@@ -143,34 +155,24 @@ class DrawerViewController : UIViewController, UIGestureRecognizerDelegate {
     
     private func miniPlayerAnimator(for finalState: State, duration: TimeInterval) ->  UIViewPropertyAnimator {
         let miniPlayerAnimator = UIViewPropertyAnimator(duration: duration, curve: .easeOut, animations: {
-            switch finalState {
-            case .open:
-                self.miniPlayerView.alpha = 0
-            case .closed:
-                self.miniPlayerView.alpha = 1
-            }
+            self.miniPlayerView.alpha = finalState == .open ? 0 : 1
         })
         miniPlayerAnimator.scrubsLinearly = false
         return miniPlayerAnimator
     }
     
     private func playerContentAnimator(for finalState: State, duration: TimeInterval) ->  UIViewPropertyAnimator {
-        let outTitleAnimator = UIViewPropertyAnimator(duration: duration, curve: .easeIn, animations: {
-            switch finalState {
-            case .open:
-                self.playerView.alpha = 1
-            case .closed:
-                self.playerView.alpha = 0
-            }
+        let playerContentAnimator = UIViewPropertyAnimator(duration: duration, curve: .easeIn, animations: {
+            self.playerView.alpha = finalState == .open ? 1 : 0
         })
-        outTitleAnimator.scrubsLinearly = false
-        return outTitleAnimator
+        playerContentAnimator.scrubsLinearly = false
+        return playerContentAnimator
     }
     
     private func updateUI(with state: State) {
-        view.backgroundColor = color(from: state)
-        bottomConstraint.constant = bottomOffset(from: state)
-        playerContainerView.layer.cornerRadius = cornerRadius(from: state)
+        view.backgroundColor = state == .open ? UIColor.black.withAlphaComponent(0.3) : .clear
+        playerContainerView.transform = state == .open ? .identity : CGAffineTransform(translationX: 0, y: popupCollapsedButtomInset)
+        playerContainerView.layer.cornerRadius = state == .open ? 10 : 0
     }
     
     private func finalState(from initialState: State, position: UIViewAnimatingPosition) -> State {
@@ -184,31 +186,5 @@ class DrawerViewController : UIViewController, UIGestureRecognizerDelegate {
         }
     }
 
-    private func color(from state: State) -> UIColor {
-        switch state {
-        case .open:
-            return UIColor.black.withAlphaComponent(0.3)
-        case .closed:
-            return .clear
-        }
-    }
-    
-    private func bottomOffset(from state: State) -> CGFloat {
-        switch state {
-        case .open:
-            return 0
-        case .closed:
-            return popupCollapsedButtomInset
-        }
-    }
-    
-    private func cornerRadius(from state: State) -> CGFloat {
-        switch state {
-        case .open:
-            return 10
-        case .closed:
-            return 0
-        }
-    }
 }
 
