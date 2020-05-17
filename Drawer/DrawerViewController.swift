@@ -93,19 +93,24 @@ class DrawerViewController : UIViewController, UIGestureRecognizerDelegate {
         }
     }
     
-    private lazy var popupHeight = {
-        return view.bounds.height - popupTopOffset + popupBottomInsetHeight
+    private lazy var popupFullHeight = {
+        return view.bounds.inset(by: view.safeAreaInsets).height - popupTopOffset + popupBottomInsetHeight
     }()
-    private lazy var popupOffset = {
-        return popupHeight - popupCollapsedHeight
+    private let popupCollapsedHeight = CGFloat(54)
+    private lazy var popupOffset: CGFloat = {
+        return popupFullHeight - popupCollapsedHeight
     }()
     private let popupBottomInsetHeight = CGFloat(100)
-    private let popupTopOffset = CGFloat(60)
-    private let popupCollapsedHeight = CGFloat(100)
+    private let popupTopOffset = CGFloat(24)
     private let animationDuration = TimeInterval(0.6)
     
     override func viewDidLoad() {
         super.viewDidLoad()
+//        setupUI()
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
         setupUI()
     }
     
@@ -115,23 +120,32 @@ class DrawerViewController : UIViewController, UIGestureRecognizerDelegate {
         view.addSubview(popupView)
         popupView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
         popupView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
-        popupView.heightAnchor.constraint(equalToConstant: popupHeight).isActive = true
-        bottomConstraint = popupView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: popupOffset)
+        popupView.heightAnchor.constraint(equalToConstant: popupFullHeight).isActive = true
+        bottomConstraint = popupView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: popupOffset)
         bottomConstraint.isActive = true
         popupView.addGestureRecognizer(panGestureRecognizer)
         popupView.addGestureRecognizer(tapGestureRecognizer)
         
+        let miniView = UIView()
+        miniView.backgroundColor = .clear
+        miniView.translatesAutoresizingMaskIntoConstraints = false
+        popupView.addSubview(miniView)
+        miniView.topAnchor.constraint(equalTo: popupView.topAnchor).isActive = true
+        miniView.leadingAnchor.constraint(equalTo: popupView.leadingAnchor).isActive = true
+        miniView.trailingAnchor.constraint(equalTo: popupView.trailingAnchor).isActive = true
+        miniView.heightAnchor.constraint(equalToConstant: popupCollapsedHeight).isActive = true
+
+        popupView.addSubview(miniView)
+        
         closedTitleLabel.translatesAutoresizingMaskIntoConstraints = false
-        popupView.addSubview(closedTitleLabel)
-        closedTitleLabel.leadingAnchor.constraint(equalTo: popupView.leadingAnchor).isActive = true
-        closedTitleLabel.trailingAnchor.constraint(equalTo: popupView.trailingAnchor).isActive = true
-        closedTitleLabel.topAnchor.constraint(equalTo: popupView.topAnchor, constant: 20).isActive = true
+        miniView.addSubview(closedTitleLabel)
+        closedTitleLabel.centerYAnchor.constraint(equalTo: miniView.centerYAnchor).isActive = true
+        closedTitleLabel.centerXAnchor.constraint(equalTo: miniView.centerXAnchor).isActive = true
         
         openTitleLabel.translatesAutoresizingMaskIntoConstraints = false
-        popupView.addSubview(openTitleLabel)
-        openTitleLabel.leadingAnchor.constraint(equalTo: popupView.leadingAnchor).isActive = true
-        openTitleLabel.trailingAnchor.constraint(equalTo: popupView.trailingAnchor).isActive = true
-        openTitleLabel.topAnchor.constraint(equalTo: popupView.topAnchor, constant: 30).isActive = true
+        miniView.addSubview(openTitleLabel)
+        openTitleLabel.centerYAnchor.constraint(equalTo: miniView.centerYAnchor).isActive = true
+        openTitleLabel.centerXAnchor.constraint(equalTo: miniView.centerXAnchor).isActive = true
     }
     
     @objc private func popupViewPanned(recognizer: UIPanGestureRecognizer) {
@@ -272,7 +286,7 @@ class DrawerViewController : UIViewController, UIGestureRecognizerDelegate {
     private func cornerRadius(from state: State) -> CGFloat {
         switch state {
         case .open:
-            return 20
+            return 10
         case .closed:
             return 0
         }
