@@ -8,31 +8,6 @@
 
 import UIKit
 
-extension Array where Element: UIViewPropertyAnimator {
-    
-    func startAnimations() {
-        forEach { $0.startAnimation() }
-    }
-    
-    func pauseAnimations() {
-        forEach { $0.pauseAnimation() }
-    }
-    
-    func continueAnimations(withTimingParameters parameters: UITimingCurveProvider? = nil, durationFactor: CGFloat = 0) {
-        forEach { $0.continueAnimation(withTimingParameters: parameters, durationFactor: durationFactor) }
-    }
-    
-    var fractionComplete: CGFloat {
-        set {
-            forEach { $0.fractionComplete = newValue }
-        }
-        get {
-            assertionFailure("The getter is not supported!")
-            return 0
-        }
-    }
-}
-
 class DrawerViewController : UIViewController, UIGestureRecognizerDelegate {
     
     private enum State {
@@ -47,12 +22,11 @@ class DrawerViewController : UIViewController, UIGestureRecognizerDelegate {
         }
     }
     
-    private lazy var popupView: UIView = {
-        let view = UIView()
-        view.backgroundColor = .darkGray
-        view.layer.maskedCorners = [.layerMaxXMinYCorner, .layerMinXMinYCorner]
-        return view
-    }()
+    @IBOutlet private var playerView: UIView!
+    @IBOutlet private var miniPlayerView: UIView!
+    @IBOutlet private var bottomConstraint: NSLayoutConstraint!
+    @IBOutlet private var heightConstraint: NSLayoutConstraint!
+
     private lazy var closedTitleLabel: UILabel = {
         let label = UILabel()
         label.text = "Closed"
@@ -72,7 +46,6 @@ class DrawerViewController : UIViewController, UIGestureRecognizerDelegate {
         label.transform = CGAffineTransform(scaleX: 0.65, y: 0.65).concatenating(CGAffineTransform(translationX: 0, y: -15))
         return label
     }()
-    private var bottomConstraint = NSLayoutConstraint()
     private lazy var panGestureRecognizer: UIPanGestureRecognizer = {
         let recognizer = UIPanGestureRecognizer()
         recognizer.addTarget(self, action: #selector(popupViewPanned(recognizer:)))
@@ -93,15 +66,11 @@ class DrawerViewController : UIViewController, UIGestureRecognizerDelegate {
         }
     }
     
-    private lazy var popupFullHeight = {
-        return view.bounds.inset(by: view.safeAreaInsets).height - popupTopOffset + popupBottomInsetHeight
-    }()
-    private let popupCollapsedHeight = CGFloat(54)
-    private lazy var popupOffset: CGFloat = {
-        return popupFullHeight - popupCollapsedHeight
-    }()
-    private let popupBottomInsetHeight = CGFloat(100)
-    private let popupTopOffset = CGFloat(24)
+    private var popupFullHeight : CGFloat { view.bounds.height - popupTopInset }
+    private var popupBottomInset: CGFloat { view.safeAreaInsets.bottom } // extend background to safe area
+    private var popupTopInset: CGFloat { view.safeAreaInsets.top + 24 }
+    private var popupCollapsedHeight: CGFloat { miniPlayerView.bounds.height }
+    private var popupCollapsedButtomInset: CGFloat { popupCollapsedHeight + popupBottomInset - popupFullHeight }
     private let animationDuration = TimeInterval(0.6)
     
     override func viewDidLoad() {
@@ -116,36 +85,23 @@ class DrawerViewController : UIViewController, UIGestureRecognizerDelegate {
     
     private func setupUI() {
         view.backgroundColor = .clear
-        popupView.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(popupView)
-        popupView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
-        popupView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
-        popupView.heightAnchor.constraint(equalToConstant: popupFullHeight).isActive = true
-        bottomConstraint = popupView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: popupOffset)
-        bottomConstraint.isActive = true
-        popupView.addGestureRecognizer(panGestureRecognizer)
-        popupView.addGestureRecognizer(tapGestureRecognizer)
-        
-        let miniView = UIView()
-        miniView.backgroundColor = .clear
-        miniView.translatesAutoresizingMaskIntoConstraints = false
-        popupView.addSubview(miniView)
-        miniView.topAnchor.constraint(equalTo: popupView.topAnchor).isActive = true
-        miniView.leadingAnchor.constraint(equalTo: popupView.leadingAnchor).isActive = true
-        miniView.trailingAnchor.constraint(equalTo: popupView.trailingAnchor).isActive = true
-        miniView.heightAnchor.constraint(equalToConstant: popupCollapsedHeight).isActive = true
-
-        popupView.addSubview(miniView)
+        playerView.layer.maskedCorners = [.layerMaxXMinYCorner, .layerMinXMinYCorner]
+        bottomConstraint.constant = popupCollapsedButtomInset
+        heightConstraint.constant = popupFullHeight
+        playerView.addGestureRecognizer(panGestureRecognizer)
+        miniPlayerView.addGestureRecognizer(tapGestureRecognizer)
         
         closedTitleLabel.translatesAutoresizingMaskIntoConstraints = false
-        miniView.addSubview(closedTitleLabel)
-        closedTitleLabel.centerYAnchor.constraint(equalTo: miniView.centerYAnchor).isActive = true
-        closedTitleLabel.centerXAnchor.constraint(equalTo: miniView.centerXAnchor).isActive = true
+        miniPlayerView.addSubview(closedTitleLabel)
+        closedTitleLabel.centerYAnchor.constraint(equalTo: miniPlayerView.centerYAnchor).isActive = true
+        closedTitleLabel.centerXAnchor.constraint(equalTo: miniPlayerView.centerXAnchor).isActive = true
         
         openTitleLabel.translatesAutoresizingMaskIntoConstraints = false
-        miniView.addSubview(openTitleLabel)
-        openTitleLabel.centerYAnchor.constraint(equalTo: miniView.centerYAnchor).isActive = true
-        openTitleLabel.centerXAnchor.constraint(equalTo: miniView.centerXAnchor).isActive = true
+        miniPlayerView.addSubview(openTitleLabel)
+        openTitleLabel.centerYAnchor.constraint(equalTo: miniPlayerView.centerYAnchor).isActive = true
+        openTitleLabel.centerXAnchor.constraint(equalTo: miniPlayerView.centerXAnchor).isActive = true
+        
+        view.layoutIfNeeded()
     }
     
     @objc private func popupViewPanned(recognizer: UIPanGestureRecognizer) {
@@ -155,9 +111,9 @@ class DrawerViewController : UIViewController, UIGestureRecognizerDelegate {
             runningAnimators.startAnimations()
             runningAnimators.pauseAnimations()
         case .changed:
-            let translation = recognizer.translation(in: popupView)
-            var fraction = -translation.y / popupOffset
-            if currentState == .open { fraction *= -1 }
+            let translation = recognizer.translation(in: playerView)
+            var fraction = -translation.y / popupCollapsedButtomInset
+            if currentState == .closed { fraction *= -1 }
             runningAnimators.fractionComplete = fraction
         case .ended:
             runningAnimators.continueAnimations()
@@ -231,7 +187,7 @@ class DrawerViewController : UIViewController, UIGestureRecognizerDelegate {
     private func updateUI(with state: State) {
         view.backgroundColor = color(from: state)
         bottomConstraint.constant = bottomOffset(from: state)
-        popupView.layer.cornerRadius = cornerRadius(from: state)
+        playerView.layer.cornerRadius = cornerRadius(from: state)
         closedTitleLabel.transform = closedTitleLabelTransform(from: state)
         openTitleLabel.transform = openTitleLabelTransform(from: state)
     }
@@ -277,9 +233,9 @@ class DrawerViewController : UIViewController, UIGestureRecognizerDelegate {
     private func bottomOffset(from state: State) -> CGFloat {
         switch state {
         case .open:
-            return popupBottomInsetHeight
+            return 0
         case .closed:
-            return popupOffset
+            return popupCollapsedButtomInset
         }
     }
     
@@ -290,31 +246,6 @@ class DrawerViewController : UIViewController, UIGestureRecognizerDelegate {
         case .closed:
             return 0
         }
-    }
-}
-
-extension UIViewController {
-    public func add(_ child: UIViewController, insets: UIEdgeInsets = .zero) {
-        addChild(child)
-        view.addSubview(child.view)
-        child.view.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            child.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            child.view.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            child.view.topAnchor.constraint(equalTo: view.topAnchor),
-            child.view.bottomAnchor.constraint(equalTo: view.bottomAnchor)
-        ])
-        child.didMove(toParent: self)
-    }
-    
-    public func remove(_ child: UIViewController) {
-        guard child.parent != nil else {
-            return
-        }
-        
-        child.willMove(toParent: nil)
-        child.view.removeFromSuperview()
-        child.removeFromParent()
     }
 }
 
