@@ -13,7 +13,7 @@ protocol DrawerViewControllerDelegate: class {
     
     func didStartStateChange(to state: DrawerViewController.State)
     func didProgressStateChange(to state: DrawerViewController.State, fraction: CGFloat)
-    func didContinueStateChange(to state: DrawerViewController.State)
+    func didContinueStateChange(to state: DrawerViewController.State, isReversed: Bool)
     func didFinishStateChange(to state: DrawerViewController.State)
 }
 
@@ -71,7 +71,9 @@ class DrawerViewController : UIViewController, UIGestureRecognizerDelegate {
         playerContainerView.layer.maskedCorners = [.layerMaxXMinYCorner, .layerMinXMinYCorner]
         playerContainerView.addGestureRecognizer(panGestureRecognizer)
         playerContainerView.addGestureRecognizer(tapGestureRecognizer)
-        updateUI(with: .closed)
+        updateUI(with: currentState)
+        miniPlayerView.alpha = currentState == .open ? 0 : 1
+        playerView.alpha = currentState == .open ? 1 : 0
     }
     
     @objc private func popupViewPanned(recognizer: UIPanGestureRecognizer) {
@@ -92,7 +94,30 @@ class DrawerViewController : UIViewController, UIGestureRecognizerDelegate {
         case .ended:
             runningAnimators.continueAnimations()
             
-            delegate?.didContinueStateChange(to: currentState.reversed)
+            // variable setup
+            let yVelocity = recognizer.velocity(in: playerContainerView).y
+            let shouldClose = yVelocity > 0
+            
+            // if there is no motion, continue all animations and exit early
+            if yVelocity == 0 {
+                runningAnimators.continueAnimations()
+                delegate?.didContinueStateChange(to: currentState.reversed, isReversed: runningAnimators[0].isReversed)
+                break
+            }
+            
+            // reverse the animations based on their current state and pan motion
+            switch (currentState, shouldClose) {
+            case (.open, true), (.closed, false):
+                if runningAnimators[0].isReversed { runningAnimators.forEach { $0.isReversed = !$0.isReversed } }
+            case (.open, false), (.closed, true):
+                if !runningAnimators[0].isReversed { runningAnimators.forEach { $0.isReversed = !$0.isReversed } }
+            }
+            
+            // continue all animations
+            runningAnimators.continueAnimations()
+            
+            
+            delegate?.didContinueStateChange(to: currentState.reversed, isReversed: runningAnimators[0].isReversed)
         default:
             ()
         }

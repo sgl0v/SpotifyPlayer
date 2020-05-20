@@ -55,7 +55,8 @@ extension TabViewController: DrawerViewControllerDelegate {
         tabbarAnimator.fractionComplete = fraction
     }
     
-    func didContinueStateChange(to state: DrawerViewController.State) {
+    func didContinueStateChange(to state: DrawerViewController.State, isReversed: Bool) {
+        tabbarAnimator.isReversed = isReversed
         tabbarAnimator.continueAnimation(withTimingParameters: nil, durationFactor: 0)
     }
     
