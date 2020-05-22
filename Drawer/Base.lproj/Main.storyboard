@@ -26,28 +26,21 @@
                                             <constraint firstAttribute="height" constant="1" id="BEn-cs-hpQ"/>
                                         </constraints>
                                     </view>
-                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="aYd-Fq-mty">
-                                        <rect key="frame" x="0.0" y="0.0" width="281.33333333333331" height="1"/>
-                                        <color key="backgroundColor" name="tintColor"/>
-                                        <constraints>
-                                            <constraint firstAttribute="height" constant="1" id="LiK-QI-2f8"/>
-                                        </constraints>
-                                    </view>
                                     <stackView opaque="NO" contentMode="scaleToFill" distribution="equalSpacing" alignment="center" spacing="16" translatesAutoresizingMaskIntoConstraints="NO" id="M82-GT-f96">
                                         <rect key="frame" x="42" y="0.0" width="291" height="54"/>
                                         <subviews>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="pez-PD-og7">
-                                                <rect key="frame" x="0.0" y="16" width="18" height="22"/>
+                                                <rect key="frame" x="0.0" y="10" width="36" height="34"/>
                                                 <color key="tintColor" name="secondaryTextColor"/>
                                                 <state key="normal" image="music.note.list"/>
                                             </button>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="4MD-ag-IcF">
-                                                <rect key="frame" x="139" y="16" width="16" height="22"/>
+                                                <rect key="frame" x="132.66666666666666" y="11" width="32" height="32"/>
                                                 <color key="tintColor" name="secondaryTextColor"/>
                                                 <state key="normal" image="magnifyingglass"/>
                                             </button>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Jaz-ve-Oe4">
-                                                <rect key="frame" x="276" y="16" width="15" height="22"/>
+                                                <rect key="frame" x="261" y="11" width="30" height="32"/>
                                                 <color key="tintColor" name="secondaryTextColor"/>
                                                 <state key="normal" image="person"/>
                                             </button>
@@ -61,9 +54,6 @@
                                 <constraints>
                                     <constraint firstAttribute="trailing" secondItem="M82-GT-f96" secondAttribute="trailing" constant="42" id="Fue-rN-uV5"/>
                                     <constraint firstItem="M82-GT-f96" firstAttribute="leading" secondItem="PNr-G0-qIF" secondAttribute="leading" constant="42" id="GQa-tK-axc"/>
-                                    <constraint firstItem="aYd-Fq-mty" firstAttribute="width" secondItem="PNr-G0-qIF" secondAttribute="width" multiplier="0.75" id="HTQ-nK-OHI"/>
-                                    <constraint firstItem="aYd-Fq-mty" firstAttribute="top" secondItem="PNr-G0-qIF" secondAttribute="top" id="IYJ-mS-VCM"/>
-                                    <constraint firstItem="aYd-Fq-mty" firstAttribute="leading" secondItem="PNr-G0-qIF" secondAttribute="leading" id="Qhm-0y-1yf"/>
                                     <constraint firstItem="M82-GT-f96" firstAttribute="top" secondItem="PNr-G0-qIF" secondAttribute="top" id="YQa-8G-8QL"/>
                                     <constraint firstItem="FG0-5d-UVZ" firstAttribute="top" secondItem="PNr-G0-qIF" secondAttribute="top" id="lNe-LT-S2f"/>
                                     <constraint firstItem="FG0-5d-UVZ" firstAttribute="leading" secondItem="PNr-G0-qIF" secondAttribute="leading" id="qyf-ap-gY9"/>
@@ -82,8 +72,6 @@
                     </view>
                     <navigationItem key="navigationItem" id="BWc-1S-Iaw"/>
                     <connections>
-                        <outlet property="bottomConstraint" destination="6Bx-v4-M3E" id="gHR-2e-T74"/>
-                        <outlet property="progressView" destination="aYd-Fq-mty" id="7p5-y9-6hu"/>
                         <outlet property="tabBar" destination="PNr-G0-qIF" id="XMW-vN-eQv"/>
                     </connections>
                 </viewController>
@@ -103,9 +91,6 @@
             <color red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </namedColor>
         <namedColor name="secondaryTextColor">
-            <color red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-        </namedColor>
-        <namedColor name="tintColor">
             <color red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </namedColor>
     </resources>

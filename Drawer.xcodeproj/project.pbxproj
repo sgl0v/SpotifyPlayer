@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		E747871724786D1B00606CC8 /* TransitionAnimator.swift in Sources */ = {isa = PBXBuildFile; fileRef = E747871624786D1B00606CC8 /* TransitionAnimator.swift */; };
 		E775F2AD247160F500185D17 /* DrawerViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = E775F2AC247160F500185D17 /* DrawerViewController.xib */; };
 		E775F2AF2471615900185D17 /* Array+UIViewPropertyAnimator.swift in Sources */ = {isa = PBXBuildFile; fileRef = E775F2AE2471615900185D17 /* Array+UIViewPropertyAnimator.swift */; };
 		E775F2B12471658400185D17 /* UIViewController+Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = E775F2B02471658400185D17 /* UIViewController+Utils.swift */; };
@@ -20,6 +21,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		E747871624786D1B00606CC8 /* TransitionAnimator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransitionAnimator.swift; sourceTree = "<group>"; };
 		E775F2AC247160F500185D17 /* DrawerViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = DrawerViewController.xib; sourceTree = "<group>"; };
 		E775F2AE2471615900185D17 /* Array+UIViewPropertyAnimator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array+UIViewPropertyAnimator.swift"; sourceTree = "<group>"; };
 		E775F2B02471658400185D17 /* UIViewController+Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+Utils.swift"; sourceTree = "<group>"; };
@@ -73,6 +75,7 @@
 				E7A04CD624706C4900ADD847 /* Info.plist */,
 				E7A04CDC24706C6500ADD847 /* DrawerViewController.swift */,
 				E775F2AC247160F500185D17 /* DrawerViewController.xib */,
+				E747871624786D1B00606CC8 /* TransitionAnimator.swift */,
 				E775F2AE2471615900185D17 /* Array+UIViewPropertyAnimator.swift */,
 				E775F2B02471658400185D17 /* UIViewController+Utils.swift */,
 			);
@@ -152,6 +155,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				E7A04CCD24706C4800ADD847 /* TabViewController.swift in Sources */,
+				E747871724786D1B00606CC8 /* TransitionAnimator.swift in Sources */,
 				E775F2AF2471615900185D17 /* Array+UIViewPropertyAnimator.swift in Sources */,
 				E775F2B12471658400185D17 /* UIViewController+Utils.swift in Sources */,
 				E7A04CDD24706C6500ADD847 /* DrawerViewController.swift in Sources */,
