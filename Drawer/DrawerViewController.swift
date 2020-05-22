@@ -135,29 +135,13 @@ class DrawerViewController : UIViewController, UIGestureRecognizerDelegate {
     }
     
     private func startAnimations(for finalState: State) {
-//        switch finalState {
-//        case .open:
-//            runningAnimators[0].startAnimation()
-//            runningAnimators[1].startAnimation()
-//            runningAnimators[2].startAnimation(afterDelay: miniPlayerAnimationDuration)
-//        case .closed:
-//            runningAnimators[0].startAnimation()
-//            runningAnimators[1].startAnimation(afterDelay: showPlayerAnimationDuration - miniPlayerAnimationDuration)
-//            runningAnimators[2].startAnimation(afterDelay: showPlayerAnimationDuration - miniPlayerAnimationDuration - playerAnimationDuration)
-//        }
         runningAnimators.startAnimations()
     }
     
     private func createAnimations(for finalState: State) -> [UIViewPropertyAnimator] {
-//        return [
-//            transitionAnimator(for: currentState.reversed, duration: showPlayerAnimationDuration),
-//            miniPlayerAnimator(for: currentState.reversed, duration: miniPlayerAnimationDuration),
-//            playerContentAnimator(for: currentState.reversed, duration: playerAnimationDuration)
-//        ]
         return [
             transitionAnimator(for: currentState.reversed, duration: showPlayerAnimationDuration),
-            miniPlayerAnimator(for: currentState.reversed, duration: showPlayerAnimationDuration),
-            playerContentAnimator(for: currentState.reversed, duration: showPlayerAnimationDuration)
+            contentAnimator(for: currentState.reversed, duration: showPlayerAnimationDuration)
         ]
     }
     
@@ -178,20 +162,18 @@ class DrawerViewController : UIViewController, UIGestureRecognizerDelegate {
         return transitionAnimator
     }
     
-    private func miniPlayerAnimator(for finalState: State, duration: TimeInterval) ->  UIViewPropertyAnimator {
-        let miniPlayerAnimator = UIViewPropertyAnimator(duration: duration, curve: .easeOut, animations: {
-            self.miniPlayerView.alpha = finalState == .open ? 0 : 1
-        })
-        miniPlayerAnimator.scrubsLinearly = false
-        return miniPlayerAnimator
-    }
-    
-    private func playerContentAnimator(for finalState: State, duration: TimeInterval) ->  UIViewPropertyAnimator {
-        let playerContentAnimator = UIViewPropertyAnimator(duration: duration, curve: .easeIn, animations: {
-            self.playerView.alpha = finalState == .open ? 1 : 0
-        })
-        playerContentAnimator.scrubsLinearly = false
-        return playerContentAnimator
+    private func contentAnimator(for finalState: State, duration: TimeInterval) ->  UIViewPropertyAnimator {
+        return UIViewPropertyAnimator(duration: duration, curve: .linear) {
+          UIView.animateKeyframes(withDuration: duration, delay: 0, animations: {
+            UIView.addKeyframe(withRelativeStartTime: 0, relativeDuration: 0.1) {
+              self.miniPlayerView.alpha = finalState == .open ? 0 : 1
+            }
+
+            UIView.addKeyframe(withRelativeStartTime: 0.1, relativeDuration: 0.4) {
+              self.playerView.alpha = finalState == .open ? 1 : 0
+            }
+          })
+        }
     }
     
     private func updateUI(with state: State) {
