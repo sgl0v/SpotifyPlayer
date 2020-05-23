@@ -112,15 +112,22 @@ class TransitionAnimator: NSObject {
     private func startAnimations(for finalState: State) {
         runningAnimators.startAnimations()
     }
-    
+
     private func createAnimations(for finalState: State) -> [UIViewPropertyAnimator] {
+        switch finalState {
+        case .open: return createOpenAnimations(for: finalState)
+        case .closed: return createCloseAnimations(for: finalState)
+        }
+    }
+
+    private func createOpenAnimations(for finalState: State) -> [UIViewPropertyAnimator] {
         return [
-            transitionAnimator(for: currentState.reversed, duration: animationDuration),
-            contentAnimator(for: currentState.reversed, duration: animationDuration)
+            transitionOpenAnimator(for: currentState.reversed, duration: animationDuration),
+            contentOpenAnimator(for: currentState.reversed, duration: animationDuration)
         ]
     }
     
-    private func transitionAnimator(for finalState: State, duration: TimeInterval) -> UIViewPropertyAnimator {
+    private func transitionOpenAnimator(for finalState: State, duration: TimeInterval) -> UIViewPropertyAnimator {
         let transitionAnimator = UIViewPropertyAnimator(duration: duration, dampingRatio: 0.9, animations: {
             self.updatePlayerContainer(with: finalState)
             self.drawerViewController?.view.layoutIfNeeded()
@@ -131,7 +138,7 @@ class TransitionAnimator: NSObject {
         return transitionAnimator
     }
     
-    private func contentAnimator(for finalState: State, duration: TimeInterval) ->  UIViewPropertyAnimator {
+    private func contentOpenAnimator(for finalState: State, duration: TimeInterval) ->  UIViewPropertyAnimator {
         let animator = UIViewPropertyAnimator(duration: duration, curve: .linear, animations: {
             UIView.animateKeyframes(withDuration: duration, delay: 0, animations: {
                 UIView.addKeyframe(withRelativeStartTime: 0, relativeDuration: 0.1) {
@@ -159,7 +166,48 @@ class TransitionAnimator: NSObject {
             // remove all running animators
             self.runningAnimators.removeAll()
         }
-        animator.scrubsLinearly = false
+//        animator.scrubsLinearly = false
+        return animator
+    }
+    
+    private func createCloseAnimations(for finalState: State) -> [UIViewPropertyAnimator] {
+        return [
+//            transitionCloseAnimator(for: currentState.reversed, duration: animationDuration),
+            contentCloseAnimator(for: currentState.reversed, duration: animationDuration)
+        ]
+    }
+    
+    private func transitionCloseAnimator(for finalState: State, duration: TimeInterval) -> UIViewPropertyAnimator {
+        return UIViewPropertyAnimator(duration: duration, dampingRatio: 0.9, animations: {
+            self.updatePlayerContainer(with: finalState)
+            self.drawerViewController?.view.layoutIfNeeded()
+            self.updateTabBar(with: finalState)
+        })
+    }
+    
+    private func contentCloseAnimator(for finalState: State, duration: TimeInterval) ->  UIViewPropertyAnimator {
+        let animator = UIViewPropertyAnimator(duration: duration, dampingRatio: 0.9, animations: {
+            self.updatePlayerContainer(with: finalState)
+            self.drawerViewController?.view.layoutIfNeeded()
+            self.updateTabBar(with: finalState)
+            
+            UIView.animateKeyframes(withDuration: duration, delay: 0, animations: {
+                UIView.addKeyframe(withRelativeStartTime: 0.5, relativeDuration: 0.5) {
+                    self.updateMiniPlayer(with: finalState)
+                }
+
+                UIView.addKeyframe(withRelativeStartTime: 0.5, relativeDuration: 0.5) {
+                    self.updatePlayer(with: finalState)
+                }
+            })
+        })
+        animator.addCompletion { position in
+            self.currentState = self.finalState(from: finalState.reversed, position: position)
+            self.updateUI(with: self.currentState)
+            
+            // remove all running animators
+            self.runningAnimators.removeAll()
+        }
         return animator
     }
     

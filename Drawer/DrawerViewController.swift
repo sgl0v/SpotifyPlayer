@@ -14,6 +14,7 @@ class DrawerViewController : UIViewController, UIGestureRecognizerDelegate {
     @IBOutlet var playerView: UIView!
     @IBOutlet var closeButton: UIButton!
     @IBOutlet var artwork: UIView!
+    @IBOutlet var progressIndicator: UIView!
     private lazy var bgLayer: CALayer = {
         let layer = CAGradientLayer()
         layer.colors = [UIColor(named: "gradientStart")!.cgColor, UIColor(named: "gradientEnd")!.cgColor]

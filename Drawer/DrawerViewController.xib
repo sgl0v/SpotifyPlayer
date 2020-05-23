@@ -14,6 +14,7 @@
                 <outlet property="closeButton" destination="119-iY-5o1" id="p27-gG-Okb"/>
                 <outlet property="miniPlayerView" destination="eYO-ml-qFs" id="TEY-tf-NVs"/>
                 <outlet property="playerView" destination="VTK-5y-qmL" id="XZd-e0-ocY"/>
+                <outlet property="progressIndicator" destination="1Tz-ee-MPS" id="xV8-YC-c2p"/>
                 <outlet property="view" destination="iN0-l3-epB" id="sD2-b2-Uac"/>
             </connections>
         </placeholder>
