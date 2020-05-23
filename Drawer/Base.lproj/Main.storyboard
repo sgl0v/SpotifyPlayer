@@ -16,63 +16,57 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
+                            <imageView hidden="YES" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="IMG_0613" translatesAutoresizingMaskIntoConstraints="NO" id="KAI-HB-uWz">
+                                <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
+                            </imageView>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="PNr-G0-qIF">
-                                <rect key="frame" x="0.0" y="724" width="375" height="88"/>
+                                <rect key="frame" x="0.0" y="729" width="375" height="83"/>
                                 <subviews>
-                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="FG0-5d-UVZ">
-                                        <rect key="frame" x="0.0" y="0.0" width="375" height="1"/>
-                                        <color key="backgroundColor" name="primaryBackgroundColor"/>
-                                        <constraints>
-                                            <constraint firstAttribute="height" constant="1" id="BEn-cs-hpQ"/>
-                                        </constraints>
-                                    </view>
-                                    <stackView opaque="NO" contentMode="scaleToFill" distribution="equalSpacing" alignment="center" spacing="16" translatesAutoresizingMaskIntoConstraints="NO" id="M82-GT-f96">
-                                        <rect key="frame" x="42" y="0.0" width="291" height="54"/>
-                                        <subviews>
-                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="pez-PD-og7">
-                                                <rect key="frame" x="0.0" y="10" width="36" height="34"/>
-                                                <color key="tintColor" name="secondaryTextColor"/>
-                                                <state key="normal" image="music.note.list"/>
-                                            </button>
-                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="4MD-ag-IcF">
-                                                <rect key="frame" x="132.66666666666666" y="11" width="32" height="32"/>
-                                                <color key="tintColor" name="secondaryTextColor"/>
-                                                <state key="normal" image="magnifyingglass"/>
-                                            </button>
-                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Jaz-ve-Oe4">
-                                                <rect key="frame" x="261" y="11" width="30" height="32"/>
-                                                <color key="tintColor" name="secondaryTextColor"/>
-                                                <state key="normal" image="person"/>
-                                            </button>
-                                        </subviews>
-                                        <constraints>
-                                            <constraint firstAttribute="height" constant="54" id="4DB-Zj-UaQ"/>
-                                        </constraints>
-                                    </stackView>
+                                    <tabBar contentMode="scaleToFill" translucent="NO" translatesAutoresizingMaskIntoConstraints="NO" id="aF5-nu-vCe">
+                                        <rect key="frame" x="0.0" y="0.0" width="375" height="49"/>
+                                        <color key="backgroundColor" name="secondaryBackgroundColor"/>
+                                        <items>
+                                            <tabBarItem title="Home" image="house" catalog="system" id="hu3-LX-vV7">
+                                                <color key="badgeColor" name="secondaryTextColor"/>
+                                            </tabBarItem>
+                                            <tabBarItem title="Search" image="magnifyingglass" catalog="system" id="rmd-ei-0bz">
+                                                <color key="badgeColor" name="secondaryTextColor"/>
+                                            </tabBarItem>
+                                            <tabBarItem title="Library" image="circle.grid.3x3.fill" catalog="system" id="ICK-Nd-D4W">
+                                                <color key="badgeColor" name="secondaryTextColor"/>
+                                            </tabBarItem>
+                                        </items>
+                                        <color key="tintColor" name="tintColor"/>
+                                        <color key="barTintColor" name="secondaryBackgroundColor"/>
+                                        <color key="selectedImageTintColor" name="tintColor"/>
+                                    </tabBar>
                                 </subviews>
                                 <color key="backgroundColor" name="secondaryBackgroundColor"/>
+                                <color key="tintColor" name="tintColor"/>
                                 <constraints>
-                                    <constraint firstAttribute="trailing" secondItem="M82-GT-f96" secondAttribute="trailing" constant="42" id="Fue-rN-uV5"/>
-                                    <constraint firstItem="M82-GT-f96" firstAttribute="leading" secondItem="PNr-G0-qIF" secondAttribute="leading" constant="42" id="GQa-tK-axc"/>
-                                    <constraint firstItem="M82-GT-f96" firstAttribute="top" secondItem="PNr-G0-qIF" secondAttribute="top" id="YQa-8G-8QL"/>
-                                    <constraint firstItem="FG0-5d-UVZ" firstAttribute="top" secondItem="PNr-G0-qIF" secondAttribute="top" id="lNe-LT-S2f"/>
-                                    <constraint firstItem="FG0-5d-UVZ" firstAttribute="leading" secondItem="PNr-G0-qIF" secondAttribute="leading" id="qyf-ap-gY9"/>
-                                    <constraint firstAttribute="trailing" secondItem="FG0-5d-UVZ" secondAttribute="trailing" id="xtk-sz-WsR"/>
+                                    <constraint firstItem="aF5-nu-vCe" firstAttribute="top" secondItem="PNr-G0-qIF" secondAttribute="top" id="iXj-Ut-YVO"/>
+                                    <constraint firstAttribute="trailing" secondItem="aF5-nu-vCe" secondAttribute="trailing" id="rIN-86-IOU"/>
+                                    <constraint firstItem="aF5-nu-vCe" firstAttribute="leading" secondItem="PNr-G0-qIF" secondAttribute="leading" id="yUV-9x-wlL"/>
                                 </constraints>
                             </view>
                         </subviews>
                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                         <constraints>
                             <constraint firstAttribute="bottom" secondItem="PNr-G0-qIF" secondAttribute="bottom" id="6Bx-v4-M3E"/>
-                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="M82-GT-f96" secondAttribute="bottom" id="Saw-aD-52S"/>
+                            <constraint firstItem="KAI-HB-uWz" firstAttribute="top" secondItem="8bC-Xf-vdC" secondAttribute="top" id="EQ3-gZ-YNc"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="aF5-nu-vCe" secondAttribute="bottom" id="Hph-sh-R4r"/>
+                            <constraint firstAttribute="bottom" secondItem="KAI-HB-uWz" secondAttribute="bottom" id="Iud-37-iOW"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="KAI-HB-uWz" secondAttribute="trailing" id="VTD-U5-fGh"/>
                             <constraint firstItem="PNr-G0-qIF" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="lfZ-zQ-hZR"/>
+                            <constraint firstItem="KAI-HB-uWz" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="nbV-1u-YWD"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="PNr-G0-qIF" secondAttribute="trailing" id="vjw-Vc-gqH"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                     </view>
                     <navigationItem key="navigationItem" id="BWc-1S-Iaw"/>
                     <connections>
-                        <outlet property="tabBar" destination="PNr-G0-qIF" id="XMW-vN-eQv"/>
+                        <outlet property="tabBar" destination="aF5-nu-vCe" id="71d-7I-cBj"/>
+                        <outlet property="tabBarContainer" destination="PNr-G0-qIF" id="DCs-1I-yrh"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
@@ -81,16 +75,17 @@
         </scene>
     </scenes>
     <resources>
-        <image name="magnifyingglass" width="16" height="16"/>
-        <image name="music.note.list" width="18" height="17"/>
-        <image name="person" width="15" height="16"/>
-        <namedColor name="primaryBackgroundColor">
-            <color red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-        </namedColor>
+        <image name="IMG_0613" width="1125" height="2436"/>
+        <image name="circle.grid.3x3.fill" catalog="system" width="64" height="56"/>
+        <image name="house" catalog="system" width="64" height="54"/>
+        <image name="magnifyingglass" catalog="system" width="64" height="56"/>
         <namedColor name="secondaryBackgroundColor">
             <color red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </namedColor>
         <namedColor name="secondaryTextColor">
+            <color red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </namedColor>
+        <namedColor name="tintColor">
             <color red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </namedColor>
     </resources>

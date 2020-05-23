@@ -10,17 +10,31 @@ import UIKit
 
 class DrawerViewController : UIViewController, UIGestureRecognizerDelegate {
     
-    @IBOutlet var playerContainerView: UIView!
     @IBOutlet var miniPlayerView: UIView!
     @IBOutlet var playerView: UIView!
+    @IBOutlet var closeButton: UIButton!
+    @IBOutlet var artwork: UIView!
+    private lazy var bgLayer: CALayer = {
+        let layer = CAGradientLayer()
+        layer.colors = [UIColor(named: "gradientStart")!.cgColor, UIColor(named: "gradientEnd")!.cgColor]
+        return layer
+    }()
     
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        setupUI()
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        playerView.layer.insertSublayer(bgLayer, at: 0)
+        view.layer.maskedCorners = [.layerMaxXMinYCorner, .layerMinXMinYCorner]
+        
+        artwork.layer.shadowPath = UIBezierPath(rect: artwork.bounds).cgPath
+        artwork.layer.shadowColor = UIColor.black.cgColor
+        artwork.layer.shadowRadius = 16
+        artwork.layer.shadowOffset = .zero
+        artwork.layer.shadowOpacity = 0.1
     }
     
-    private func setupUI() {
-        view.backgroundColor = .clear
-        playerContainerView.layer.maskedCorners = [.layerMaxXMinYCorner, .layerMinXMinYCorner]
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        bgLayer.frame = playerView.bounds
     }
+
 }

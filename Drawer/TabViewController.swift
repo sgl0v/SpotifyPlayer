@@ -15,20 +15,33 @@ class TabViewController: UIViewController {
         viewController.view.backgroundColor = UIColor(named: "primaryBackgroundColor")
         return UINavigationController(rootViewController: viewController)
     }()
-    @IBOutlet var tabBar: UIView!
+    @IBOutlet var tabBarContainer: UIView!
+    @IBOutlet private var tabBar: UITabBar!
     private var animatior: TransitionAnimator!
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .white
+        if #available(iOS 13, *) {
+            // iOS 13:
+            let appearance = tabBar.standardAppearance
+            appearance.configureWithTransparentBackground()
+            appearance.shadowImage = nil
+            appearance.shadowColor = nil
+            tabBar.standardAppearance = appearance
+        } else {
+            // iOS 12 and below:
+            tabBar.shadowImage = UIImage()
+            tabBar.backgroundImage = UIImage()
+        }
+        tabBar.selectedItem = tabBar.items?.first
         add(libraryViewController)
         add(drawerViewController)
-        view.bringSubviewToFront(tabBar)
+        view.bringSubviewToFront(tabBarContainer)
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        let additionalBottomInset = tabBar.bounds.height - view.safeAreaInsets.bottom
+        let additionalBottomInset = tabBar.bounds.height
         drawerViewController.additionalSafeAreaInsets = UIEdgeInsets(top: 0, left: 0, bottom: additionalBottomInset, right: 0)
         animatior = TransitionAnimator(tabBarViewController: self, drawerViewController: drawerViewController)
     }

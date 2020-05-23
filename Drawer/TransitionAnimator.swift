@@ -39,23 +39,22 @@ class TransitionAnimator: NSObject {
     }()
     private var runningAnimators = [UIViewPropertyAnimator]()
     private var currentState: State = .closed
-    private var popupCollapsedButtomInset: CGFloat {
-        guard let drawerViewController = self.drawerViewController else { return 0 }
-        return drawerViewController.playerContainerView.bounds.height - drawerViewController.view.safeAreaInsets.bottom  - drawerViewController.miniPlayerView.bounds.height - 100
-    }
+    private let popupCollapsedButtomInset: CGFloat
     private let animationDuration = TimeInterval(0.7)
     
     init(tabBarViewController: TabViewController, drawerViewController: DrawerViewController) {
         self.tabBarViewController = tabBarViewController
         self.drawerViewController = drawerViewController
+        self.popupCollapsedButtomInset = drawerViewController.view.bounds.height - drawerViewController.view.safeAreaInsets.bottom - drawerViewController.miniPlayerView.bounds.height
         super.init()
-        drawerViewController.playerContainerView.addGestureRecognizer(panGestureRecognizer)
-        drawerViewController.playerContainerView.addGestureRecognizer(tapGestureRecognizer)
+        drawerViewController.view.addGestureRecognizer(panGestureRecognizer)
+        drawerViewController.miniPlayerView.addGestureRecognizer(tapGestureRecognizer)
+        drawerViewController.closeButton.addTarget(self, action: #selector(didTapCloseButton(_:)), for: .touchUpInside)
         updateUI(with: currentState)
     }
     
     @objc private func popupViewPanned(recognizer: UIPanGestureRecognizer) {
-        guard let playerContainerView = drawerViewController?.playerContainerView else { return }
+        guard let playerContainerView = drawerViewController?.view else { return }
         
         switch recognizer.state {
         case .began:
@@ -99,9 +98,14 @@ class TransitionAnimator: NSObject {
     }
     
     @objc private func popupViewTapped(recognizer: UITapGestureRecognizer) {
-        guard let miniPlayerView = drawerViewController?.miniPlayerView,
-            let playerContainerView = drawerViewController?.playerContainerView,
-            miniPlayerView.frame.contains(recognizer.location(in: playerContainerView)) else { return }
+//        guard let miniPlayerView = drawerViewController?.miniPlayerView,
+//            let playerContainerView = drawerViewController?.view,
+//            miniPlayerView.frame.contains(recognizer.location(in: playerContainerView)) else { return }
+        runningAnimators = createAnimations(for: currentState.reversed)
+        startAnimations(for: currentState.reversed)
+    }
+    
+    @objc private func didTapCloseButton(_ sender: Any) {
         runningAnimators = createAnimations(for: currentState.reversed)
         startAnimations(for: currentState.reversed)
     }
@@ -112,33 +116,36 @@ class TransitionAnimator: NSObject {
     
     private func createAnimations(for finalState: State) -> [UIViewPropertyAnimator] {
         return [
-//            transitionAnimator(for: currentState.reversed, duration: showPlayerAnimationDuration),
+            transitionAnimator(for: currentState.reversed, duration: animationDuration),
             contentAnimator(for: currentState.reversed, duration: animationDuration)
         ]
     }
     
-//    private func transitionAnimator(for finalState: State, duration: TimeInterval) -> UIViewPropertyAnimator {
-//        let transitionAnimator = UIViewPropertyAnimator(duration: duration, dampingRatio: 0.7, animations: {
-//            self.updatePlayerContainer(with: finalState)
-//            self.drawerViewController?.view.layoutIfNeeded()
-//        })
-//        transitionAnimator.addCompletion { position in
+    private func transitionAnimator(for finalState: State, duration: TimeInterval) -> UIViewPropertyAnimator {
+        let transitionAnimator = UIViewPropertyAnimator(duration: duration, dampingRatio: 0.9, animations: {
+            self.updatePlayerContainer(with: finalState)
+            self.drawerViewController?.view.layoutIfNeeded()
+        })
+        transitionAnimator.addAnimations({
+            self.updateTabBar(with: finalState)
+        }, delayFactor: 0.1)
+        transitionAnimator.addCompletion { position in
 //            self.currentState = self.finalState(from: finalState.reversed, position: position)
 //            self.updatePlayerContainer(with: self.currentState)
 //
 //            // remove all running animators
 //            self.runningAnimators.removeAll()
-//        }
-//        return transitionAnimator
-//    }
+        }
+        return transitionAnimator
+    }
     
     private func contentAnimator(for finalState: State, duration: TimeInterval) ->  UIViewPropertyAnimator {
-        let animator = UIViewPropertyAnimator(duration: duration, dampingRatio: 0.9, animations: {
+        let animator = UIViewPropertyAnimator(duration: duration, curve: .linear, animations: {
             UIView.animateKeyframes(withDuration: duration, delay: 0, animations: {
-                UIView.addKeyframe(withRelativeStartTime: 0, relativeDuration: 1) {
-                    self.updatePlayerContainer(with: finalState)
-                    self.drawerViewController?.view.layoutIfNeeded()
-                }
+//                UIView.addKeyframe(withRelativeStartTime: 0, relativeDuration: 1) {
+//                    self.updatePlayerContainer(with: finalState)
+//                    self.drawerViewController?.view.layoutIfNeeded()
+//                }
                 
                 UIView.addKeyframe(withRelativeStartTime: 0, relativeDuration: 0.1) {
                     self.updateMiniPlayer(with: finalState)
@@ -148,9 +155,9 @@ class TransitionAnimator: NSObject {
                     self.updatePlayer(with: finalState)
                 }
                 
-                UIView.addKeyframe(withRelativeStartTime: 0.1, relativeDuration: 0.9) {
-                    self.updateTabBar(with: finalState)
-                }
+//                UIView.addKeyframe(withRelativeStartTime: 0.1, relativeDuration: 0.9) {
+//                    self.updateTabBar(with: finalState)
+//                }
             })
         })
         animator.addCompletion { position in
@@ -172,8 +179,8 @@ class TransitionAnimator: NSObject {
     }
     
     private func updateTabBar(with state: State) {
-        guard let tabBar = tabBarViewController?.tabBar else { return }
-        tabBar.transform = state == .closed ? .identity : CGAffineTransform(translationX: 0, y: tabBar.bounds.height)
+        guard let tabBarContainer = tabBarViewController?.tabBarContainer else { return }
+        tabBarContainer.transform = state == .closed ? .identity : CGAffineTransform(translationX: 0, y: tabBarContainer.bounds.height)
     }
 
     private func updateMiniPlayer(with state: State) {
@@ -182,13 +189,12 @@ class TransitionAnimator: NSObject {
     
     private func updatePlayer(with state: State) {
         drawerViewController?.playerView.alpha = state == .open ? 1 : 0
+        drawerViewController?.view.layer.cornerRadius = state == .open ? 20 : 0
     }
 
     
     private func updatePlayerContainer(with state: State) {
-        drawerViewController?.view.backgroundColor = state == .open ? UIColor.black.withAlphaComponent(0.3) : .clear
-        drawerViewController?.playerContainerView.transform = state == .open ? .identity : CGAffineTransform(translationX: 0, y: popupCollapsedButtomInset)
-        drawerViewController?.playerContainerView.layer.cornerRadius = state == .open ? 10 : 0
+        drawerViewController?.view.transform = state == .open ? .identity : CGAffineTransform(translationX: 0, y: popupCollapsedButtomInset)
     }
     
     private func finalState(from initialState: State, position: UIViewAnimatingPosition) -> State {
