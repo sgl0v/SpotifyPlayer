@@ -65,6 +65,7 @@ class TransitionAnimator: NSObject {
             let translation = recognizer.translation(in: playerContainerView)
             var fraction = -translation.y / popupCollapsedButtomInset
             if currentState == .open { fraction *= -1 }
+            dump(fraction)
             runningAnimators.fractionComplete = fraction
             
         case .ended:
@@ -208,6 +209,7 @@ class TransitionAnimator: NSObject {
             // remove all running animators
             self.runningAnimators.removeAll()
         }
+//        animator.scrubsLinearly = false
         return animator
     }
     
@@ -228,10 +230,14 @@ class TransitionAnimator: NSObject {
     }
     
     private func updatePlayer(with state: State) {
-        drawerViewController?.playerView.alpha = state == .open ? 1 : 0
-        drawerViewController?.view.layer.cornerRadius = state == .open ? 20 : 0
+        guard let drawerViewController = drawerViewController,
+            let tabBarViewController = tabBarViewController else { return }
+        
+        drawerViewController.playerView.alpha = state == .open ? 1 : 0
+        drawerViewController.view.layer.maskedCorners = [.layerMaxXMinYCorner, .layerMinXMinYCorner]
+        let cornerRadius: CGFloat = drawerViewController.view.safeAreaInsets.bottom > tabBarViewController.tabBar.bounds.height ? 20 : 0
+        drawerViewController.view.layer.cornerRadius = state == .open ? cornerRadius : 0
     }
-
     
     private func updatePlayerContainer(with state: State) {
         drawerViewController?.view.transform = state == .open ? .identity : CGAffineTransform(translationX: 0, y: popupCollapsedButtomInset)

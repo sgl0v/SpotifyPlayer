@@ -13,10 +13,13 @@ class TabViewController: UIViewController {
     private lazy var libraryViewController: UIViewController = {
         let viewController = UIViewController()
         viewController.view.backgroundColor = UIColor(named: "primaryBackgroundColor")
-        return UINavigationController(rootViewController: viewController)
+        let navigationController = UINavigationController(rootViewController: viewController)
+        navigationController.navigationBar.barTintColor = UIColor(named: "secondaryBackgroundColor")
+        navigationController.navigationBar.isTranslucent = false
+        return navigationController
     }()
     @IBOutlet var tabBarContainer: UIView!
-    @IBOutlet private var tabBar: UITabBar!
+    @IBOutlet var tabBar: UITabBar!
     private var animatior: TransitionAnimator!
     
     override func viewDidLoad() {

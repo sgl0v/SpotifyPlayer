@@ -16,9 +16,6 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <imageView hidden="YES" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="IMG_0613" translatesAutoresizingMaskIntoConstraints="NO" id="KAI-HB-uWz">
-                                <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
-                            </imageView>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="PNr-G0-qIF">
                                 <rect key="frame" x="0.0" y="695" width="375" height="117"/>
                                 <subviews>
@@ -53,12 +50,8 @@
                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                         <constraints>
                             <constraint firstAttribute="bottom" secondItem="PNr-G0-qIF" secondAttribute="bottom" id="6Bx-v4-M3E"/>
-                            <constraint firstItem="KAI-HB-uWz" firstAttribute="top" secondItem="8bC-Xf-vdC" secondAttribute="top" id="EQ3-gZ-YNc"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="aF5-nu-vCe" secondAttribute="bottom" id="Hph-sh-R4r"/>
-                            <constraint firstAttribute="bottom" secondItem="KAI-HB-uWz" secondAttribute="bottom" id="Iud-37-iOW"/>
-                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="KAI-HB-uWz" secondAttribute="trailing" id="VTD-U5-fGh"/>
                             <constraint firstItem="PNr-G0-qIF" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="lfZ-zQ-hZR"/>
-                            <constraint firstItem="KAI-HB-uWz" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="nbV-1u-YWD"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="PNr-G0-qIF" secondAttribute="trailing" id="vjw-Vc-gqH"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
@@ -75,7 +68,6 @@
         </scene>
     </scenes>
     <resources>
-        <image name="IMG_0613" width="1125" height="2436"/>
         <image name="circle.grid.3x3.fill" catalog="system" width="64" height="56"/>
         <image name="house" catalog="system" width="64" height="54"/>
         <image name="magnifyingglass" catalog="system" width="64" height="56"/>

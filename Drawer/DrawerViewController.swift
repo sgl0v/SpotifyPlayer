@@ -24,8 +24,7 @@ class DrawerViewController : UIViewController, UIGestureRecognizerDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         playerView.layer.insertSublayer(bgLayer, at: 0)
-        view.layer.maskedCorners = [.layerMaxXMinYCorner, .layerMinXMinYCorner]
-        
+            
         artwork.layer.shadowPath = UIBezierPath(rect: artwork.bounds).cgPath
         artwork.layer.shadowColor = UIColor.black.cgColor
         artwork.layer.shadowRadius = 16

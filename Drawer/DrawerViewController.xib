@@ -173,12 +173,13 @@
                         <constraint firstItem="uYp-fe-an7" firstAttribute="leading" secondItem="VTK-5y-qmL" secondAttribute="leading" constant="18" id="0s6-Zf-BxC"/>
                         <constraint firstItem="7tl-Ec-P9P" firstAttribute="top" secondItem="1Tz-ee-MPS" secondAttribute="bottom" constant="8" id="4xa-HV-cLP"/>
                         <constraint firstItem="Akd-vw-Pt7" firstAttribute="leading" secondItem="VTK-5y-qmL" secondAttribute="leading" constant="24" id="5Y6-ID-mcL"/>
-                        <constraint firstItem="fcV-yZ-vXm" firstAttribute="top" secondItem="Akd-vw-Pt7" secondAttribute="bottom" constant="48" id="CaP-lD-szN"/>
+                        <constraint firstItem="fcV-yZ-vXm" firstAttribute="top" secondItem="Akd-vw-Pt7" secondAttribute="bottom" priority="999" constant="48" id="CaP-lD-szN"/>
                         <constraint firstItem="1Tz-ee-MPS" firstAttribute="top" secondItem="fcV-yZ-vXm" secondAttribute="bottom" constant="22" id="Dzm-OI-C0N"/>
-                        <constraint firstItem="Akd-vw-Pt7" firstAttribute="top" secondItem="uYp-fe-an7" secondAttribute="bottom" constant="54" id="EWV-a9-4gQ"/>
+                        <constraint firstItem="Akd-vw-Pt7" firstAttribute="top" secondItem="uYp-fe-an7" secondAttribute="bottom" priority="999" constant="54" id="EWV-a9-4gQ"/>
                         <constraint firstAttribute="trailing" secondItem="uYp-fe-an7" secondAttribute="trailing" constant="18" id="IuG-d4-1yX"/>
                         <constraint firstItem="fcV-yZ-vXm" firstAttribute="leading" secondItem="O28-Xf-nhW" secondAttribute="leading" constant="24" id="NR6-G4-UPd"/>
                         <constraint firstItem="oUe-HB-dgw" firstAttribute="top" secondItem="1Tz-ee-MPS" secondAttribute="bottom" constant="8" id="Txz-xE-BdH"/>
+                        <constraint firstAttribute="bottom" relation="greaterThanOrEqual" secondItem="nE6-pQ-HUy" secondAttribute="bottom" priority="999" constant="48" id="Z2A-OG-gG5"/>
                         <constraint firstItem="O28-Xf-nhW" firstAttribute="trailing" secondItem="fcV-yZ-vXm" secondAttribute="trailing" constant="24" id="ZYg-BX-Gpi"/>
                         <constraint firstItem="O28-Xf-nhW" firstAttribute="top" secondItem="uYp-fe-an7" secondAttribute="top" id="dYq-Oe-up3"/>
                         <constraint firstItem="nE6-pQ-HUy" firstAttribute="centerX" secondItem="VTK-5y-qmL" secondAttribute="centerX" id="lPE-B7-XkP"/>
@@ -190,11 +191,6 @@
                         <constraint firstAttribute="trailing" secondItem="Akd-vw-Pt7" secondAttribute="trailing" constant="24" id="zb9-we-Tj2"/>
                     </constraints>
                     <viewLayoutGuide key="safeArea" id="O28-Xf-nhW"/>
-                    <userDefinedRuntimeAttributes>
-                        <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
-                            <integer key="value" value="10"/>
-                        </userDefinedRuntimeAttribute>
-                    </userDefinedRuntimeAttributes>
                 </view>
                 <view userInteractionEnabled="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="eYO-ml-qFs">
                     <rect key="frame" x="0.0" y="0.0" width="414" height="56"/>
