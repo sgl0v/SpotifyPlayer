@@ -22,6 +22,16 @@ extension Array where Element: UIViewPropertyAnimator {
         forEach { $0.continueAnimation(withTimingParameters: parameters, durationFactor: durationFactor) }
     }
     
+    var isReversed: Bool {
+        set {
+            forEach { $0.isReversed = newValue }
+        }
+        get {
+            assertionFailure("The getter is not supported!")
+            return false
+        }
+    }
+    
     var fractionComplete: CGFloat {
         set {
             forEach { $0.fractionComplete = newValue }
