@@ -10,22 +10,14 @@ import UIKit
 
 class TabViewController: UIViewController {
     private let drawerViewController = DrawerViewController()
-    private lazy var libraryViewController: UIViewController = {
-        let viewController = UIViewController()
-        viewController.view.backgroundColor = UIColor(named: "primaryBackgroundColor")
-        let navigationController = UINavigationController(rootViewController: viewController)
-        navigationController.navigationBar.barTintColor = UIColor(named: "secondaryBackgroundColor")
-        navigationController.navigationBar.isTranslucent = false
-        return navigationController
-    }()
     @IBOutlet var tabBarContainer: UIView!
     @IBOutlet var tabBar: UITabBar!
+    var shouldHideStatusBar: Bool = false
     private var animatior: TransitionAnimator!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         if #available(iOS 13, *) {
-            // iOS 13:
             let appearance = tabBar.standardAppearance
             appearance.configureWithTransparentBackground()
             appearance.shadowImage = nil
@@ -37,7 +29,6 @@ class TabViewController: UIViewController {
             tabBar.backgroundImage = UIImage()
         }
         tabBar.selectedItem = tabBar.items?.first
-        add(libraryViewController)
         add(drawerViewController)
         view.bringSubviewToFront(tabBarContainer)
     }
@@ -47,6 +38,10 @@ class TabViewController: UIViewController {
         let additionalBottomInset = tabBar.bounds.height
         drawerViewController.additionalSafeAreaInsets = UIEdgeInsets(top: 0, left: 0, bottom: additionalBottomInset, right: 0)
         animatior = TransitionAnimator(tabBarViewController: self, drawerViewController: drawerViewController)
+    }
+    
+    override var prefersStatusBarHidden: Bool {
+        return shouldHideStatusBar
     }
     
 }

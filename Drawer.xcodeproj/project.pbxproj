@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		E71D551E247E946D008CF42C /* SearchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E71D551D247E946D008CF42C /* SearchViewController.swift */; };
 		E747871724786D1B00606CC8 /* TransitionAnimator.swift in Sources */ = {isa = PBXBuildFile; fileRef = E747871624786D1B00606CC8 /* TransitionAnimator.swift */; };
 		E775F2AD247160F500185D17 /* DrawerViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = E775F2AC247160F500185D17 /* DrawerViewController.xib */; };
 		E775F2AF2471615900185D17 /* Array+UIViewPropertyAnimator.swift in Sources */ = {isa = PBXBuildFile; fileRef = E775F2AE2471615900185D17 /* Array+UIViewPropertyAnimator.swift */; };
@@ -21,6 +22,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		E71D551D247E946D008CF42C /* SearchViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchViewController.swift; sourceTree = "<group>"; };
 		E747871624786D1B00606CC8 /* TransitionAnimator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransitionAnimator.swift; sourceTree = "<group>"; };
 		E775F2AC247160F500185D17 /* DrawerViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = DrawerViewController.xib; sourceTree = "<group>"; };
 		E775F2AE2471615900185D17 /* Array+UIViewPropertyAnimator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array+UIViewPropertyAnimator.swift"; sourceTree = "<group>"; };
@@ -78,6 +80,7 @@
 				E747871624786D1B00606CC8 /* TransitionAnimator.swift */,
 				E775F2AE2471615900185D17 /* Array+UIViewPropertyAnimator.swift */,
 				E775F2B02471658400185D17 /* UIViewController+Utils.swift */,
+				E71D551D247E946D008CF42C /* SearchViewController.swift */,
 			);
 			path = Drawer;
 			sourceTree = "<group>";
@@ -156,6 +159,7 @@
 			files = (
 				E7A04CCD24706C4800ADD847 /* TabViewController.swift in Sources */,
 				E747871724786D1B00606CC8 /* TransitionAnimator.swift in Sources */,
+				E71D551E247E946D008CF42C /* SearchViewController.swift in Sources */,
 				E775F2AF2471615900185D17 /* Array+UIViewPropertyAnimator.swift in Sources */,
 				E775F2B12471658400185D17 /* UIViewController+Utils.swift in Sources */,
 				E7A04CDD24706C6500ADD847 /* DrawerViewController.swift in Sources */,

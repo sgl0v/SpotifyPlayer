@@ -36,5 +36,5 @@ class DrawerViewController : UIViewController, UIGestureRecognizerDelegate {
         super.viewDidLayoutSubviews()
         bgLayer.frame = playerView.bounds
     }
-
+    
 }

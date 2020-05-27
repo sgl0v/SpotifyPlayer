@@ -60,7 +60,6 @@ class TransitionAnimator: NSObject {
             runningAnimators = createAnimations(for: currentState.reversed)
             startAnimations(for: currentState.reversed)
             runningAnimators.pauseAnimations()
-            
         case .changed:
             let translation = recognizer.translation(in: playerContainerView)
             var fraction = -translation.y / popupCollapsedButtomInset
@@ -221,8 +220,10 @@ class TransitionAnimator: NSObject {
     }
     
     private func updateTabBar(with state: State) {
-        guard let tabBarContainer = tabBarViewController?.tabBarContainer else { return }
+        guard let tabBarViewController = tabBarViewController, let tabBarContainer = tabBarViewController.tabBarContainer else { return }
         tabBarContainer.transform = state == .closed ? .identity : CGAffineTransform(translationX: 0, y: tabBarContainer.bounds.height)
+        tabBarViewController.shouldHideStatusBar = state == .open
+        tabBarViewController.setNeedsStatusBarAppearanceUpdate()
     }
 
     private func updateMiniPlayer(with state: State) {
