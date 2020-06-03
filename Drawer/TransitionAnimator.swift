@@ -12,13 +12,10 @@ class TransitionAnimator: NSObject {
     
     enum State: Equatable {
         case closed
-        case open
+        case opened
         
-        var reversed: State {
-            switch self {
-            case .open: return .closed
-            case .closed: return .open
-            }
+        static prefix func !(_ state: State) -> State {
+            return state == .opened ? .closed : .opened
         }
     }
     
@@ -39,13 +36,15 @@ class TransitionAnimator: NSObject {
     }()
     private var runningAnimators = [UIViewPropertyAnimator]()
     private var currentState: State = .closed
-    private let popupCollapsedButtomInset: CGFloat
     private let animationDuration = TimeInterval(0.7)
-    
+    private var totalAnimationDistance: CGFloat {
+        guard let drawerViewController = drawerViewController else { return 0 }
+        return drawerViewController.view.bounds.height - drawerViewController.view.safeAreaInsets.bottom - drawerViewController.miniPlayerView.bounds.height
+    }
+
     init(tabBarViewController: TabViewController, drawerViewController: DrawerViewController) {
         self.tabBarViewController = tabBarViewController
         self.drawerViewController = drawerViewController
-        self.popupCollapsedButtomInset = drawerViewController.view.bounds.height - drawerViewController.view.safeAreaInsets.bottom - drawerViewController.miniPlayerView.bounds.height
         super.init()
         drawerViewController.view.addGestureRecognizer(panGestureRecognizer)
         drawerViewController.view.addGestureRecognizer(tapGestureRecognizer)
@@ -57,40 +56,38 @@ class TransitionAnimator: NSObject {
         
         switch recognizer.state {
         case .began:
-            runningAnimators = createAnimations(for: currentState.reversed)
-            startAnimations(for: currentState.reversed)
+            startTransitionAnimations(for: !currentState)
             runningAnimators.pauseAnimations()
         case .changed:
             let translation = recognizer.translation(in: playerContainerView)
-            var fraction = -translation.y / popupCollapsedButtomInset
-            if currentState == .open { fraction *= -1 }
-            dump(fraction)
-            runningAnimators.fractionComplete = fraction
-            
+            updateInteractiveTransition(distanceTraveled: translation.y)
         case .ended:
-            runningAnimators.continueAnimations()
+            let velocity = recognizer.velocity(in: playerContainerView).y
+            let isCancelled = isGestureCancelled(with: velocity, state: currentState)
+            continueInteractiveTransition(cancel: isCancelled)
             
-            // variable setup
-            let yVelocity = recognizer.velocity(in: playerContainerView).y
-            let shouldClose = yVelocity > 0
-            
-            // if there is no motion, continue all animations and exit early
-            if yVelocity == 0 {
-                runningAnimators.continueAnimations()
-                break
-            }
-            
-            // reverse the animations based on their current state and pan motion
-            switch (currentState, shouldClose) {
-            case (.open, true), (.closed, false):
-                if runningAnimators[0].isReversed { runningAnimators.forEach { $0.isReversed = !$0.isReversed } }
-            case (.open, false), (.closed, true):
-                if !runningAnimators[0].isReversed { runningAnimators.forEach { $0.isReversed = !$0.isReversed } }
-            }
-            
-            // continue all animations
-            runningAnimators.continueAnimations()
-            
+//            // variable setup
+//            let yVelocity = recognizer.velocity(in: playerContainerView).y
+//            let shouldClose = yVelocity > 0
+//
+//            // if there is no motion, continue all animations and exit early
+//            if yVelocity == 0 {
+//                runningAnimators.continueAnimations()
+//                break
+//            }
+//
+//            // reverse the animations based on their current state and pan motion
+//            switch (currentState, shouldClose) {
+//            case (.open, true), (.closed, false):
+//                if runningAnimators[0].isReversed { runningAnimators.forEach { $0.isReversed = !$0.isReversed } }
+//            case (.open, false), (.closed, true):
+//                if !runningAnimators[0].isReversed { runningAnimators.forEach { $0.isReversed = !$0.isReversed } }
+//            }
+//
+//            // continue all animations
+//            runningAnimators.continueAnimations()
+        case .cancelled, .failed:
+            continueInteractiveTransition(cancel: true)
         default:
             break
         }
@@ -105,42 +102,56 @@ class TransitionAnimator: NSObject {
         let closeButtonFrame = closeButton.convert(closeButton.frame, to: view).insetBy(dx: -8, dy: -8)
         guard miniPlayerView.frame.contains(tapLocation) || closeButtonFrame.contains(tapLocation) else { return }
         
-        runningAnimators = createAnimations(for: currentState.reversed)
-        startAnimations(for: currentState.reversed)
+        startTransitionAnimations(for: !currentState)
     }
     
-    private func startAnimations(for finalState: State) {
+    private func startTransitionAnimations(for finalState: State) {
+        switch finalState {
+        case .opened: runningAnimators = createOpenAnimations(for: finalState)
+        case .closed: runningAnimators = createCloseAnimations(for: finalState)
+        }
         runningAnimators.startAnimations()
     }
-
-    private func createAnimations(for finalState: State) -> [UIViewPropertyAnimator] {
-        switch finalState {
-        case .open: return createOpenAnimations(for: finalState)
-        case .closed: return createCloseAnimations(for: finalState)
+    
+    private func isGestureCancelled(with velocity: CGFloat, state: State) -> Bool {
+        guard velocity != 0 else { return false }
+        
+        let isPanningDown = velocity > 0
+        return (state == .closed && isPanningDown) || (state == .opened && !isPanningDown)
+    }
+    
+    func updateInteractiveTransition(distanceTraveled: CGFloat) {
+        var fraction = distanceTraveled / totalAnimationDistance
+        if currentState == .closed { fraction *= -1 }
+//            dump(fraction)
+        runningAnimators.fractionComplete = fraction
+    }
+    
+    // Continues or reverse transition on pan .ended
+    func continueInteractiveTransition(cancel: Bool) {
+        if cancel {
+            runningAnimators.reverse()
         }
+        
+//        let timing = UICubicTimingParameters(animationCurve: .easeOut)
+//        for animator in runningAnimators {
+//            animator.continueAnimation(withTimingParameters: timing, durationFactor: 0)
+//        }
+        runningAnimators.continueAnimations()
     }
 
     private func createOpenAnimations(for finalState: State) -> [UIViewPropertyAnimator] {
         return [
-            transitionOpenAnimator(for: currentState.reversed, duration: animationDuration),
-            contentOpenAnimator(for: currentState.reversed, duration: animationDuration)
+            contentOpenAnimator(for: finalState, duration: animationDuration)
         ]
     }
     
-    private func transitionOpenAnimator(for finalState: State, duration: TimeInterval) -> UIViewPropertyAnimator {
-        let transitionAnimator = UIViewPropertyAnimator(duration: duration, dampingRatio: 0.9, animations: {
+    private func contentOpenAnimator(for finalState: State, duration: TimeInterval) -> UIViewPropertyAnimator {
+        let animator = UIViewPropertyAnimator(duration: duration, dampingRatio: 1.0, animations: {
             self.updatePlayerContainer(with: finalState)
-            self.drawerViewController?.view.layoutIfNeeded()
         })
-        transitionAnimator.addAnimations({
-            self.updateTabBar(with: finalState)
-        }, delayFactor: 0.1)
-        return transitionAnimator
-    }
-    
-    private func contentOpenAnimator(for finalState: State, duration: TimeInterval) ->  UIViewPropertyAnimator {
-        let animator = UIViewPropertyAnimator(duration: duration, curve: .linear, animations: {
-            UIView.animateKeyframes(withDuration: duration, delay: 0, animations: {
+        animator.addAnimations {
+            UIView.animateKeyframes(withDuration: 0, delay: 0, animations: {
                 UIView.addKeyframe(withRelativeStartTime: 0, relativeDuration: 0.1) {
                     self.updateMiniPlayer(with: finalState)
                 }
@@ -148,39 +159,31 @@ class TransitionAnimator: NSObject {
                 UIView.addKeyframe(withRelativeStartTime: 0.1, relativeDuration: 0.1) {
                     self.updatePlayer(with: finalState)
                 }
-
-                //                UIView.addKeyframe(withRelativeStartTime: 0, relativeDuration: 1) {
-                //                    self.updatePlayerContainer(with: finalState)
-                //                    self.drawerViewController?.view.layoutIfNeeded()
-                //                }
-                                
-//                UIView.addKeyframe(withRelativeStartTime: 0.1, relativeDuration: 0.9) {
-//                    self.updateTabBar(with: finalState)
-//                }
+                
+                UIView.addKeyframe(withRelativeStartTime: 0.1, relativeDuration: 0.8) {
+                    self.updateTabBar(with: finalState)
+                }
             })
-        })
+        }
         animator.addCompletion { position in
-            self.currentState = self.finalState(from: finalState.reversed, position: position)
+            self.currentState = self.finalState(from: !finalState, position: position)
             self.updateUI(with: self.currentState)
             
             // remove all running animators
             self.runningAnimators.removeAll()
         }
-//        animator.scrubsLinearly = false
         return animator
     }
     
     private func createCloseAnimations(for finalState: State) -> [UIViewPropertyAnimator] {
         return [
-//            transitionCloseAnimator(for: currentState.reversed, duration: animationDuration),
-            contentCloseAnimator(for: currentState.reversed, duration: animationDuration)
+            contentCloseAnimator(for: finalState, duration: animationDuration)
         ]
     }
     
     private func transitionCloseAnimator(for finalState: State, duration: TimeInterval) -> UIViewPropertyAnimator {
         return UIViewPropertyAnimator(duration: duration, dampingRatio: 0.9, animations: {
             self.updatePlayerContainer(with: finalState)
-            self.drawerViewController?.view.layoutIfNeeded()
             self.updateTabBar(with: finalState)
         })
     }
@@ -188,10 +191,9 @@ class TransitionAnimator: NSObject {
     private func contentCloseAnimator(for finalState: State, duration: TimeInterval) ->  UIViewPropertyAnimator {
         let animator = UIViewPropertyAnimator(duration: duration, dampingRatio: 0.9, animations: {
             self.updatePlayerContainer(with: finalState)
-            self.drawerViewController?.view.layoutIfNeeded()
             self.updateTabBar(with: finalState)
             
-            UIView.animateKeyframes(withDuration: duration, delay: 0, animations: {
+            UIView.animateKeyframes(withDuration: 0, delay: 0, options: [], animations: {
                 UIView.addKeyframe(withRelativeStartTime: 0.5, relativeDuration: 0.5) {
                     self.updateMiniPlayer(with: finalState)
                 }
@@ -202,7 +204,7 @@ class TransitionAnimator: NSObject {
             })
         })
         animator.addCompletion { position in
-            self.currentState = self.finalState(from: finalState.reversed, position: position)
+            self.currentState = self.finalState(from: !finalState, position: position)
             self.updateUI(with: self.currentState)
             
             // remove all running animators
@@ -222,32 +224,32 @@ class TransitionAnimator: NSObject {
     private func updateTabBar(with state: State) {
         guard let tabBarViewController = tabBarViewController, let tabBarContainer = tabBarViewController.tabBarContainer else { return }
         tabBarContainer.transform = state == .closed ? .identity : CGAffineTransform(translationX: 0, y: tabBarContainer.bounds.height)
-        tabBarViewController.shouldHideStatusBar = state == .open
+        tabBarViewController.shouldHideStatusBar = state == .opened
         tabBarViewController.setNeedsStatusBarAppearanceUpdate()
     }
 
     private func updateMiniPlayer(with state: State) {
-        drawerViewController?.miniPlayerView.alpha = state == .open ? 0 : 1
+        drawerViewController?.miniPlayerView.alpha = state == .opened ? 0 : 1
     }
     
     private func updatePlayer(with state: State) {
         guard let drawerViewController = drawerViewController,
             let tabBarViewController = tabBarViewController else { return }
         
-        drawerViewController.playerView.alpha = state == .open ? 1 : 0
+        drawerViewController.playerView.alpha = state == .opened ? 1 : 0
         drawerViewController.view.layer.maskedCorners = [.layerMaxXMinYCorner, .layerMinXMinYCorner]
         let cornerRadius: CGFloat = drawerViewController.view.safeAreaInsets.bottom > tabBarViewController.tabBar.bounds.height ? 20 : 0
-        drawerViewController.view.layer.cornerRadius = state == .open ? cornerRadius : 0
+        drawerViewController.view.layer.cornerRadius = state == .opened ? cornerRadius : 0
     }
     
     private func updatePlayerContainer(with state: State) {
-        drawerViewController?.view.transform = state == .open ? .identity : CGAffineTransform(translationX: 0, y: popupCollapsedButtomInset)
+        drawerViewController?.view.transform = state == .opened ? .identity : CGAffineTransform(translationX: 0, y: totalAnimationDistance)
     }
     
     private func finalState(from initialState: State, position: UIViewAnimatingPosition) -> State {
         switch position {
         case .end:
-            return initialState.reversed
+            return !initialState
         case .start, .current:
             return initialState
         @unknown default:

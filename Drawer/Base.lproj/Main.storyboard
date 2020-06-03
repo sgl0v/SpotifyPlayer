@@ -17,16 +17,16 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <containerView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="RJb-KM-JkB">
-                                <rect key="frame" x="0.0" y="0.0" width="375" height="695"/>
+                                <rect key="frame" x="0.0" y="0.0" width="375" height="729"/>
                                 <connections>
                                     <segue destination="IcV-IX-YWb" kind="embed" id="uJL-h8-p6l"/>
                                 </connections>
                             </containerView>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="PNr-G0-qIF">
-                                <rect key="frame" x="0.0" y="695" width="375" height="117"/>
+                                <rect key="frame" x="0.0" y="729" width="375" height="83"/>
                                 <subviews>
                                     <tabBar contentMode="scaleToFill" translucent="NO" translatesAutoresizingMaskIntoConstraints="NO" id="aF5-nu-vCe">
-                                        <rect key="frame" x="0.0" y="0.0" width="375" height="83"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="375" height="49"/>
                                         <color key="backgroundColor" name="secondaryBackgroundColor"/>
                                         <items>
                                             <tabBarItem title="Home" image="house" catalog="system" id="hu3-LX-vV7">
@@ -98,7 +98,7 @@
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Music" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="tGy-Sd-BUH">
                                                     <rect key="frame" x="8" y="28.666666666666671" width="359" height="43"/>
                                                     <fontDescription key="fontDescription" type="boldSystem" pointSize="36"/>
-                                                    <nil key="textColor"/>
+                                                    <color key="textColor" name="tintColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                             </subviews>
@@ -305,7 +305,7 @@
                                                 <stackView opaque="NO" contentMode="scaleToFill" alignment="center" spacing="16" translatesAutoresizingMaskIntoConstraints="NO" id="oNW-GQ-4mC">
                                                     <rect key="frame" x="8" y="8" width="359" height="58"/>
                                                     <subviews>
-                                                        <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="play" translatesAutoresizingMaskIntoConstraints="NO" id="dbh-kD-w7c">
+                                                        <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="playa" translatesAutoresizingMaskIntoConstraints="NO" id="dbh-kD-w7c">
                                                             <rect key="frame" x="0.0" y="0.0" width="58" height="58"/>
                                                             <constraints>
                                                                 <constraint firstAttribute="width" secondItem="dbh-kD-w7c" secondAttribute="height" multiplier="1:1" id="S8v-j0-eLc"/>
@@ -363,7 +363,7 @@
         <image name="hotel" width="240" height="240"/>
         <image name="house" catalog="system" width="64" height="54"/>
         <image name="magnifyingglass" catalog="system" width="64" height="56"/>
-        <image name="play" width="240" height="241"/>
+        <image name="playa" width="240" height="241"/>
         <image name="playb" width="241" height="240"/>
         <namedColor name="primaryBackgroundColor">
             <color red="0.071000002324581146" green="0.071000002324581146" blue="0.071000002324581146" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>

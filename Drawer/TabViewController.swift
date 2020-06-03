@@ -17,17 +17,7 @@ class TabViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        if #available(iOS 13, *) {
-            let appearance = tabBar.standardAppearance
-            appearance.configureWithTransparentBackground()
-            appearance.shadowImage = nil
-            appearance.shadowColor = nil
-            tabBar.standardAppearance = appearance
-        } else {
-            // iOS 12 and below:
-            tabBar.shadowImage = UIImage()
-            tabBar.backgroundImage = UIImage()
-        }
+        setupUI()
         tabBar.selectedItem = tabBar.items?.first
         add(drawerViewController)
         view.bringSubviewToFront(tabBarContainer)
@@ -42,6 +32,19 @@ class TabViewController: UIViewController {
     
     override var prefersStatusBarHidden: Bool {
         return shouldHideStatusBar
+    }
+    
+    private func setupUI() {
+        if #available(iOS 13, *) {
+            let appearance = tabBar.standardAppearance
+            appearance.configureWithTransparentBackground()
+            appearance.shadowImage = nil
+            appearance.shadowColor = nil
+            tabBar.standardAppearance = appearance
+        } else {
+            tabBar.shadowImage = UIImage()
+            tabBar.backgroundImage = UIImage()
+        }
     }
     
 }
