@@ -1,5 +1,5 @@
 //
-//  DrawerViewController.swift
+//  PlayerViewController.swift
 //  Drawer
 //
 //  Created by Maksym Shcheglov on 16/05/2020.
@@ -8,7 +8,7 @@
 
 import UIKit
 
-class DrawerViewController : UIViewController, UIGestureRecognizerDelegate {
+class PlayerViewController : UIViewController, UIGestureRecognizerDelegate {
     
     @IBOutlet var miniPlayerView: UIView!
     @IBOutlet var playerView: UIView!

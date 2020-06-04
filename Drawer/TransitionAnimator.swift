@@ -20,7 +20,7 @@ class TransitionAnimator: NSObject {
     }
     
     private weak var tabBarViewController: TabViewController?
-    private weak var drawerViewController: DrawerViewController?
+    private weak var playerViewController: PlayerViewController?
     
     private lazy var panGestureRecognizer: UIPanGestureRecognizer = {
         let recognizer = UIPanGestureRecognizer()
@@ -35,57 +35,33 @@ class TransitionAnimator: NSObject {
         return recognizer
     }()
     private var runningAnimators = [UIViewPropertyAnimator]()
-    private var currentState: State = .closed
+    private var state: State = .closed
     private let animationDuration = TimeInterval(0.7)
     private var totalAnimationDistance: CGFloat {
-        guard let drawerViewController = drawerViewController else { return 0 }
-        return drawerViewController.view.bounds.height - drawerViewController.view.safeAreaInsets.bottom - drawerViewController.miniPlayerView.bounds.height
+        guard let playerViewController = playerViewController else { return 0 }
+        return playerViewController.view.bounds.height - playerViewController.view.safeAreaInsets.bottom - playerViewController.miniPlayerView.bounds.height
     }
 
-    init(tabBarViewController: TabViewController, drawerViewController: DrawerViewController) {
+    init(tabBarViewController: TabViewController, playerViewController: PlayerViewController) {
         self.tabBarViewController = tabBarViewController
-        self.drawerViewController = drawerViewController
+        self.playerViewController = playerViewController
         super.init()
-        drawerViewController.view.addGestureRecognizer(panGestureRecognizer)
-        drawerViewController.view.addGestureRecognizer(tapGestureRecognizer)
-        updateUI(with: currentState)
+        playerViewController.view.addGestureRecognizer(panGestureRecognizer)
+        playerViewController.view.addGestureRecognizer(tapGestureRecognizer)
+        updateUI(with: state)
     }
     
     @objc private func popupViewPanned(recognizer: UIPanGestureRecognizer) {
-        guard let playerContainerView = drawerViewController?.view else { return }
-        
         switch recognizer.state {
         case .began:
-            startTransitionAnimations(for: !currentState)
-            runningAnimators.pauseAnimations()
+            startInteractiveTransition(for: !state)
         case .changed:
-            let translation = recognizer.translation(in: playerContainerView)
+            let translation = recognizer.translation(in: recognizer.view!)
             updateInteractiveTransition(distanceTraveled: translation.y)
         case .ended:
-            let velocity = recognizer.velocity(in: playerContainerView).y
-            let isCancelled = isGestureCancelled(with: velocity, state: currentState)
+            let velocity = recognizer.velocity(in: recognizer.view!).y
+            let isCancelled = isGestureCancelled(with: velocity)
             continueInteractiveTransition(cancel: isCancelled)
-            
-//            // variable setup
-//            let yVelocity = recognizer.velocity(in: playerContainerView).y
-//            let shouldClose = yVelocity > 0
-//
-//            // if there is no motion, continue all animations and exit early
-//            if yVelocity == 0 {
-//                runningAnimators.continueAnimations()
-//                break
-//            }
-//
-//            // reverse the animations based on their current state and pan motion
-//            switch (currentState, shouldClose) {
-//            case (.open, true), (.closed, false):
-//                if runningAnimators[0].isReversed { runningAnimators.forEach { $0.isReversed = !$0.isReversed } }
-//            case (.open, false), (.closed, true):
-//                if !runningAnimators[0].isReversed { runningAnimators.forEach { $0.isReversed = !$0.isReversed } }
-//            }
-//
-//            // continue all animations
-//            runningAnimators.continueAnimations()
         case .cancelled, .failed:
             continueInteractiveTransition(cancel: true)
         default:
@@ -94,15 +70,20 @@ class TransitionAnimator: NSObject {
     }
     
     @objc private func popupViewTapped(recognizer: UITapGestureRecognizer) {
-        guard let miniPlayerView = drawerViewController?.miniPlayerView,
-            let closeButton = drawerViewController?.closeButton,
-            let view = drawerViewController?.view else { return }
+        guard let miniPlayerView = playerViewController?.miniPlayerView,
+            let closeButton = playerViewController?.closeButton,
+            let view = playerViewController?.view else { return }
         
         let tapLocation = recognizer.location(in: view)
         let closeButtonFrame = closeButton.convert(closeButton.frame, to: view).insetBy(dx: -8, dy: -8)
         guard miniPlayerView.frame.contains(tapLocation) || closeButtonFrame.contains(tapLocation) else { return }
         
-        startTransitionAnimations(for: !currentState)
+        startTransitionAnimations(for: !state)
+    }
+
+    private func startInteractiveTransition(for finalState: State) {
+        startTransitionAnimations(for: finalState)
+        runningAnimators.pauseAnimations()
     }
     
     private func startTransitionAnimations(for finalState: State) {
@@ -113,104 +94,147 @@ class TransitionAnimator: NSObject {
         runningAnimators.startAnimations()
     }
     
-    private func isGestureCancelled(with velocity: CGFloat, state: State) -> Bool {
+    private func isGestureCancelled(with velocity: CGFloat) -> Bool {
         guard velocity != 0 else { return false }
         
         let isPanningDown = velocity > 0
         return (state == .closed && isPanningDown) || (state == .opened && !isPanningDown)
     }
     
+    // Scrubs transition on pan .changed
     func updateInteractiveTransition(distanceTraveled: CGFloat) {
         var fraction = distanceTraveled / totalAnimationDistance
-        if currentState == .closed { fraction *= -1 }
+        if state == .closed { fraction *= -1 }
 //            dump(fraction)
         runningAnimators.fractionComplete = fraction
     }
     
     // Continues or reverse transition on pan .ended
     func continueInteractiveTransition(cancel: Bool) {
-        if cancel {
-            runningAnimators.reverse()
-        }
+        if cancel { runningAnimators.reverse() }
         
-//        let timing = UICubicTimingParameters(animationCurve: .easeOut)
-//        for animator in runningAnimators {
-//            animator.continueAnimation(withTimingParameters: timing, durationFactor: 0)
-//        }
         runningAnimators.continueAnimations()
     }
 
     private func createOpenAnimations(for finalState: State) -> [UIViewPropertyAnimator] {
         return [
-            contentOpenAnimator(for: finalState, duration: animationDuration)
+            transformOpenAnimator(for: finalState, duration: animationDuration),
+//            contentOpenAnimator(for: finalState, duration: animationDuration)
+            fadeInPlayerAnimator(duration: animationDuration),
+            fadeOutMiniPlayerAnimator(duration: animationDuration)
         ]
     }
     
-    private func contentOpenAnimator(for finalState: State, duration: TimeInterval) -> UIViewPropertyAnimator {
+    private func transformOpenAnimator(for finalState: State, duration: TimeInterval) -> UIViewPropertyAnimator {
         let animator = UIViewPropertyAnimator(duration: duration, dampingRatio: 1.0, animations: {
             self.updatePlayerContainer(with: finalState)
+            self.updateTabBar(with: finalState)
         })
-        animator.addAnimations {
+        animator.addCompletion { position in
+            self.runningAnimators.remove(animator)
+            
+            self.state = self.finalState(from: !finalState, position: position)
+            self.updateUI(with: self.state)
+        }
+        return animator
+    }
+    
+    private func fadeInPlayerAnimator(duration: TimeInterval) -> UIViewPropertyAnimator {
+        let animator = UIViewPropertyAnimator(duration: duration / 2, curve: .easeIn, animations: {
+            self.updatePlayer(with: .opened)
+        })
+        animator.addCompletion({ _ in self.runningAnimators.remove(animator) })
+        animator.scrubsLinearly = false
+        return animator
+    }
+    
+    private func fadeOutMiniPlayerAnimator(duration: TimeInterval) -> UIViewPropertyAnimator {
+        let animator = UIViewPropertyAnimator(duration: duration / 2, curve: .easeOut, animations: {
+            self.updateMiniPlayer(with: .opened)
+        })
+        animator.addCompletion({ _ in self.runningAnimators.remove(animator) })
+        animator.scrubsLinearly = false
+        return animator
+    }
+    
+    private func contentOpenAnimator(for finalState: State, duration: TimeInterval) -> UIViewPropertyAnimator {
+        let animator = UIViewPropertyAnimator(duration: duration, curve: .linear, animations: {
             UIView.animateKeyframes(withDuration: 0, delay: 0, animations: {
-                UIView.addKeyframe(withRelativeStartTime: 0, relativeDuration: 0.1) {
+                UIView.addKeyframe(withRelativeStartTime: 0, relativeDuration: 0.25) {
                     self.updateMiniPlayer(with: finalState)
                 }
                 
-                UIView.addKeyframe(withRelativeStartTime: 0.1, relativeDuration: 0.1) {
+                UIView.addKeyframe(withRelativeStartTime: 0.25, relativeDuration: 0.25) {
                     self.updatePlayer(with: finalState)
                 }
-                
-                UIView.addKeyframe(withRelativeStartTime: 0.1, relativeDuration: 0.8) {
-                    self.updateTabBar(with: finalState)
-                }
             })
-        }
-        animator.addCompletion { position in
-            self.currentState = self.finalState(from: !finalState, position: position)
-            self.updateUI(with: self.currentState)
-            
-            // remove all running animators
-            self.runningAnimators.removeAll()
-        }
+        })
+        animator.addCompletion({ _ in self.runningAnimators.remove(animator) })
         return animator
     }
     
     private func createCloseAnimations(for finalState: State) -> [UIViewPropertyAnimator] {
         return [
-            contentCloseAnimator(for: finalState, duration: animationDuration)
+            transformCloseAnimator(for: finalState, duration: animationDuration),
+//            contentCloseAnimator(for: finalState, duration: animationDuration),
+            fadeOutPlayerAnimator(duration: animationDuration),
+            fadeInMiniPlayerAnimator(duration: animationDuration)
         ]
     }
     
-    private func transitionCloseAnimator(for finalState: State, duration: TimeInterval) -> UIViewPropertyAnimator {
-        return UIViewPropertyAnimator(duration: duration, dampingRatio: 0.9, animations: {
-            self.updatePlayerContainer(with: finalState)
-            self.updateTabBar(with: finalState)
-        })
-    }
-    
-    private func contentCloseAnimator(for finalState: State, duration: TimeInterval) ->  UIViewPropertyAnimator {
+    private func transformCloseAnimator(for finalState: State, duration: TimeInterval) ->  UIViewPropertyAnimator {
         let animator = UIViewPropertyAnimator(duration: duration, dampingRatio: 0.9, animations: {
             self.updatePlayerContainer(with: finalState)
             self.updateTabBar(with: finalState)
+        })
+        animator.addCompletion { position in
+            self.state = self.finalState(from: !finalState, position: position)
+            self.updatePlayerContainer(with: self.state)
+            self.updateTabBar(with: self.state)
             
-            UIView.animateKeyframes(withDuration: 0, delay: 0, options: [], animations: {
-                UIView.addKeyframe(withRelativeStartTime: 0.5, relativeDuration: 0.5) {
+            // remove animator
+            self.runningAnimators.remove(animator)
+        }
+        return animator
+    }
+    
+    private func fadeOutPlayerAnimator(duration: TimeInterval) -> UIViewPropertyAnimator {
+        let animator = UIViewPropertyAnimator(duration: duration, curve: .easeOut, animations: { })
+        animator.addAnimations({ self.updatePlayer(with: .closed) }, delayFactor: 0.5)
+        animator.addCompletion({ _ in self.runningAnimators.remove(animator) })
+        animator.scrubsLinearly = false
+        return animator
+    }
+
+    private func fadeInMiniPlayerAnimator(duration: TimeInterval) -> UIViewPropertyAnimator {
+        let animator = UIViewPropertyAnimator(duration: duration, curve: .easeIn, animations: { })
+        animator.addAnimations({ self.updateMiniPlayer(with: .closed) }, delayFactor: 0.5)
+        animator.addCompletion({ _ in self.runningAnimators.remove(animator) })
+        animator.scrubsLinearly = false
+        return animator
+    }
+
+    
+    private func contentCloseAnimator(for finalState: State, duration: TimeInterval) -> UIViewPropertyAnimator {
+        let animator = UIViewPropertyAnimator(duration: duration, curve: .linear, animations: {
+            UIView.animateKeyframes(withDuration: 0, delay: 0, animations: {
+                UIView.addKeyframe(withRelativeStartTime: 0.75, relativeDuration: 0.25) {
                     self.updateMiniPlayer(with: finalState)
                 }
-
-                UIView.addKeyframe(withRelativeStartTime: 0.5, relativeDuration: 0.5) {
+                
+                UIView.addKeyframe(withRelativeStartTime: 0.5, relativeDuration: 0.25) {
                     self.updatePlayer(with: finalState)
                 }
             })
         })
         animator.addCompletion { position in
-            self.currentState = self.finalState(from: !finalState, position: position)
-            self.updateUI(with: self.currentState)
+            self.state = self.finalState(from: !finalState, position: position)
+            self.updateMiniPlayer(with: self.state)
+            self.updatePlayer(with: self.state)
             
-            // remove all running animators
-            self.runningAnimators.removeAll()
+            // remove animator
+            self.runningAnimators = self.runningAnimators.filter { $0 != animator }
         }
-//        animator.scrubsLinearly = false
         return animator
     }
     
@@ -229,21 +253,21 @@ class TransitionAnimator: NSObject {
     }
 
     private func updateMiniPlayer(with state: State) {
-        drawerViewController?.miniPlayerView.alpha = state == .opened ? 0 : 1
+        playerViewController?.miniPlayerView.alpha = state == .opened ? 0 : 1
     }
     
     private func updatePlayer(with state: State) {
-        guard let drawerViewController = drawerViewController,
+        guard let playerViewController = playerViewController,
             let tabBarViewController = tabBarViewController else { return }
         
-        drawerViewController.playerView.alpha = state == .opened ? 1 : 0
-        drawerViewController.view.layer.maskedCorners = [.layerMaxXMinYCorner, .layerMinXMinYCorner]
-        let cornerRadius: CGFloat = drawerViewController.view.safeAreaInsets.bottom > tabBarViewController.tabBar.bounds.height ? 20 : 0
-        drawerViewController.view.layer.cornerRadius = state == .opened ? cornerRadius : 0
+        playerViewController.playerView.alpha = state == .opened ? 1 : 0
+        playerViewController.view.layer.maskedCorners = [.layerMaxXMinYCorner, .layerMinXMinYCorner]
+        let cornerRadius: CGFloat = playerViewController.view.safeAreaInsets.bottom > tabBarViewController.tabBar.bounds.height ? 20 : 0
+        playerViewController.view.layer.cornerRadius = state == .opened ? cornerRadius : 0
     }
     
     private func updatePlayerContainer(with state: State) {
-        drawerViewController?.view.transform = state == .opened ? .identity : CGAffineTransform(translationX: 0, y: totalAnimationDistance)
+        playerViewController?.view.transform = state == .opened ? .identity : CGAffineTransform(translationX: 0, y: totalAnimationDistance)
     }
     
     private func finalState(from initialState: State, position: UIViewAnimatingPosition) -> State {

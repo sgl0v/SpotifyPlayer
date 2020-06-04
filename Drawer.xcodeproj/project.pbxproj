@@ -9,7 +9,7 @@
 /* Begin PBXBuildFile section */
 		E71D551E247E946D008CF42C /* SearchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E71D551D247E946D008CF42C /* SearchViewController.swift */; };
 		E747871724786D1B00606CC8 /* TransitionAnimator.swift in Sources */ = {isa = PBXBuildFile; fileRef = E747871624786D1B00606CC8 /* TransitionAnimator.swift */; };
-		E775F2AD247160F500185D17 /* DrawerViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = E775F2AC247160F500185D17 /* DrawerViewController.xib */; };
+		E775F2AD247160F500185D17 /* PlayerViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = E775F2AC247160F500185D17 /* PlayerViewController.xib */; };
 		E775F2AF2471615900185D17 /* Array+UIViewPropertyAnimator.swift in Sources */ = {isa = PBXBuildFile; fileRef = E775F2AE2471615900185D17 /* Array+UIViewPropertyAnimator.swift */; };
 		E775F2B12471658400185D17 /* UIViewController+Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = E775F2B02471658400185D17 /* UIViewController+Utils.swift */; };
 		E7A04CC924706C4800ADD847 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7A04CC824706C4800ADD847 /* AppDelegate.swift */; };
@@ -18,13 +18,13 @@
 		E7A04CD024706C4800ADD847 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E7A04CCE24706C4800ADD847 /* Main.storyboard */; };
 		E7A04CD224706C4900ADD847 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E7A04CD124706C4900ADD847 /* Assets.xcassets */; };
 		E7A04CD524706C4900ADD847 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E7A04CD324706C4900ADD847 /* LaunchScreen.storyboard */; };
-		E7A04CDD24706C6500ADD847 /* DrawerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7A04CDC24706C6500ADD847 /* DrawerViewController.swift */; };
+		E7A04CDD24706C6500ADD847 /* PlayerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7A04CDC24706C6500ADD847 /* PlayerViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		E71D551D247E946D008CF42C /* SearchViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchViewController.swift; sourceTree = "<group>"; };
 		E747871624786D1B00606CC8 /* TransitionAnimator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransitionAnimator.swift; sourceTree = "<group>"; };
-		E775F2AC247160F500185D17 /* DrawerViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = DrawerViewController.xib; sourceTree = "<group>"; };
+		E775F2AC247160F500185D17 /* PlayerViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PlayerViewController.xib; sourceTree = "<group>"; };
 		E775F2AE2471615900185D17 /* Array+UIViewPropertyAnimator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array+UIViewPropertyAnimator.swift"; sourceTree = "<group>"; };
 		E775F2B02471658400185D17 /* UIViewController+Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+Utils.swift"; sourceTree = "<group>"; };
 		E7A04CC524706C4800ADD847 /* Drawer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Drawer.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -35,7 +35,7 @@
 		E7A04CD124706C4900ADD847 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		E7A04CD424706C4900ADD847 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		E7A04CD624706C4900ADD847 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		E7A04CDC24706C6500ADD847 /* DrawerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrawerViewController.swift; sourceTree = "<group>"; };
+		E7A04CDC24706C6500ADD847 /* PlayerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -75,8 +75,8 @@
 				E7A04CD124706C4900ADD847 /* Assets.xcassets */,
 				E7A04CD324706C4900ADD847 /* LaunchScreen.storyboard */,
 				E7A04CD624706C4900ADD847 /* Info.plist */,
-				E7A04CDC24706C6500ADD847 /* DrawerViewController.swift */,
-				E775F2AC247160F500185D17 /* DrawerViewController.xib */,
+				E7A04CDC24706C6500ADD847 /* PlayerViewController.swift */,
+				E775F2AC247160F500185D17 /* PlayerViewController.xib */,
 				E747871624786D1B00606CC8 /* TransitionAnimator.swift */,
 				E775F2AE2471615900185D17 /* Array+UIViewPropertyAnimator.swift */,
 				E775F2B02471658400185D17 /* UIViewController+Utils.swift */,
@@ -144,7 +144,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				E7A04CD524706C4900ADD847 /* LaunchScreen.storyboard in Resources */,
-				E775F2AD247160F500185D17 /* DrawerViewController.xib in Resources */,
+				E775F2AD247160F500185D17 /* PlayerViewController.xib in Resources */,
 				E7A04CD224706C4900ADD847 /* Assets.xcassets in Resources */,
 				E7A04CD024706C4800ADD847 /* Main.storyboard in Resources */,
 			);
@@ -162,7 +162,7 @@
 				E71D551E247E946D008CF42C /* SearchViewController.swift in Sources */,
 				E775F2AF2471615900185D17 /* Array+UIViewPropertyAnimator.swift in Sources */,
 				E775F2B12471658400185D17 /* UIViewController+Utils.swift in Sources */,
-				E7A04CDD24706C6500ADD847 /* DrawerViewController.swift in Sources */,
+				E7A04CDD24706C6500ADD847 /* PlayerViewController.swift in Sources */,
 				E7A04CC924706C4800ADD847 /* AppDelegate.swift in Sources */,
 				E7A04CCB24706C4800ADD847 /* SceneDelegate.swift in Sources */,
 			);

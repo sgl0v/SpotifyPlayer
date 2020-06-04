@@ -9,7 +9,7 @@
 import UIKit
 
 class TabViewController: UIViewController {
-    private let drawerViewController = DrawerViewController()
+    private let playerViewController = PlayerViewController()
     @IBOutlet var tabBarContainer: UIView!
     @IBOutlet var tabBar: UITabBar!
     var shouldHideStatusBar: Bool = false
@@ -19,15 +19,15 @@ class TabViewController: UIViewController {
         super.viewDidLoad()
         setupUI()
         tabBar.selectedItem = tabBar.items?.first
-        add(drawerViewController)
+        add(playerViewController)
         view.bringSubviewToFront(tabBarContainer)
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         let additionalBottomInset = tabBar.bounds.height
-        drawerViewController.additionalSafeAreaInsets = UIEdgeInsets(top: 0, left: 0, bottom: additionalBottomInset, right: 0)
-        animatior = TransitionAnimator(tabBarViewController: self, drawerViewController: drawerViewController)
+        playerViewController.additionalSafeAreaInsets = UIEdgeInsets(top: 0, left: 0, bottom: additionalBottomInset, right: 0)
+        animatior = TransitionAnimator(tabBarViewController: self, playerViewController: playerViewController)
     }
     
     override var prefersStatusBarHidden: Bool {

@@ -45,4 +45,8 @@ extension Array where Element: UIViewPropertyAnimator {
     func reverse() {
         forEach { $0.isReversed = !$0.isReversed }
     }
+    
+    mutating func remove(_ element: Element) {
+        self = self.filter { $0 != element }
+    }
 }
