@@ -7,14 +7,13 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		E71D551E247E946D008CF42C /* SearchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E71D551D247E946D008CF42C /* SearchViewController.swift */; };
+		E71D551E247E946D008CF42C /* MusicViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E71D551D247E946D008CF42C /* MusicViewController.swift */; };
 		E747871724786D1B00606CC8 /* TransitionAnimator.swift in Sources */ = {isa = PBXBuildFile; fileRef = E747871624786D1B00606CC8 /* TransitionAnimator.swift */; };
 		E775F2AD247160F500185D17 /* PlayerViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = E775F2AC247160F500185D17 /* PlayerViewController.xib */; };
 		E775F2AF2471615900185D17 /* Array+UIViewPropertyAnimator.swift in Sources */ = {isa = PBXBuildFile; fileRef = E775F2AE2471615900185D17 /* Array+UIViewPropertyAnimator.swift */; };
 		E775F2B12471658400185D17 /* UIViewController+Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = E775F2B02471658400185D17 /* UIViewController+Utils.swift */; };
 		E7A04CC924706C4800ADD847 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7A04CC824706C4800ADD847 /* AppDelegate.swift */; };
-		E7A04CCB24706C4800ADD847 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7A04CCA24706C4800ADD847 /* SceneDelegate.swift */; };
-		E7A04CCD24706C4800ADD847 /* TabViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7A04CCC24706C4800ADD847 /* TabViewController.swift */; };
+		E7A04CCD24706C4800ADD847 /* TabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7A04CCC24706C4800ADD847 /* TabBarController.swift */; };
 		E7A04CD024706C4800ADD847 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E7A04CCE24706C4800ADD847 /* Main.storyboard */; };
 		E7A04CD224706C4900ADD847 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E7A04CD124706C4900ADD847 /* Assets.xcassets */; };
 		E7A04CD524706C4900ADD847 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E7A04CD324706C4900ADD847 /* LaunchScreen.storyboard */; };
@@ -22,15 +21,14 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		E71D551D247E946D008CF42C /* SearchViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchViewController.swift; sourceTree = "<group>"; };
+		E71D551D247E946D008CF42C /* MusicViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MusicViewController.swift; sourceTree = "<group>"; };
 		E747871624786D1B00606CC8 /* TransitionAnimator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransitionAnimator.swift; sourceTree = "<group>"; };
 		E775F2AC247160F500185D17 /* PlayerViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PlayerViewController.xib; sourceTree = "<group>"; };
 		E775F2AE2471615900185D17 /* Array+UIViewPropertyAnimator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array+UIViewPropertyAnimator.swift"; sourceTree = "<group>"; };
 		E775F2B02471658400185D17 /* UIViewController+Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+Utils.swift"; sourceTree = "<group>"; };
 		E7A04CC524706C4800ADD847 /* Drawer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Drawer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E7A04CC824706C4800ADD847 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		E7A04CCA24706C4800ADD847 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
-		E7A04CCC24706C4800ADD847 /* TabViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabViewController.swift; sourceTree = "<group>"; };
+		E7A04CCC24706C4800ADD847 /* TabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarController.swift; sourceTree = "<group>"; };
 		E7A04CCF24706C4800ADD847 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		E7A04CD124706C4900ADD847 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		E7A04CD424706C4900ADD847 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -49,6 +47,32 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		E7867200248AA5A80068F62A /* Sources */ = {
+			isa = PBXGroup;
+			children = (
+				E7A04CC824706C4800ADD847 /* AppDelegate.swift */,
+				E7A04CCC24706C4800ADD847 /* TabBarController.swift */,
+				E7A04CDC24706C6500ADD847 /* PlayerViewController.swift */,
+				E71D551D247E946D008CF42C /* MusicViewController.swift */,
+				E747871624786D1B00606CC8 /* TransitionAnimator.swift */,
+				E775F2AE2471615900185D17 /* Array+UIViewPropertyAnimator.swift */,
+				E775F2B02471658400185D17 /* UIViewController+Utils.swift */,
+			);
+			path = Sources;
+			sourceTree = "<group>";
+		};
+		E7867201248AA5AE0068F62A /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				E7A04CCE24706C4800ADD847 /* Main.storyboard */,
+				E7A04CD124706C4900ADD847 /* Assets.xcassets */,
+				E7A04CD324706C4900ADD847 /* LaunchScreen.storyboard */,
+				E7A04CD624706C4900ADD847 /* Info.plist */,
+				E775F2AC247160F500185D17 /* PlayerViewController.xib */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
 		E7A04CBC24706C4800ADD847 = {
 			isa = PBXGroup;
 			children = (
@@ -68,19 +92,8 @@
 		E7A04CC724706C4800ADD847 /* Drawer */ = {
 			isa = PBXGroup;
 			children = (
-				E7A04CC824706C4800ADD847 /* AppDelegate.swift */,
-				E7A04CCA24706C4800ADD847 /* SceneDelegate.swift */,
-				E7A04CCC24706C4800ADD847 /* TabViewController.swift */,
-				E7A04CCE24706C4800ADD847 /* Main.storyboard */,
-				E7A04CD124706C4900ADD847 /* Assets.xcassets */,
-				E7A04CD324706C4900ADD847 /* LaunchScreen.storyboard */,
-				E7A04CD624706C4900ADD847 /* Info.plist */,
-				E7A04CDC24706C6500ADD847 /* PlayerViewController.swift */,
-				E775F2AC247160F500185D17 /* PlayerViewController.xib */,
-				E747871624786D1B00606CC8 /* TransitionAnimator.swift */,
-				E775F2AE2471615900185D17 /* Array+UIViewPropertyAnimator.swift */,
-				E775F2B02471658400185D17 /* UIViewController+Utils.swift */,
-				E71D551D247E946D008CF42C /* SearchViewController.swift */,
+				E7867200248AA5A80068F62A /* Sources */,
+				E7867201248AA5AE0068F62A /* Resources */,
 			);
 			path = Drawer;
 			sourceTree = "<group>";
@@ -157,14 +170,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E7A04CCD24706C4800ADD847 /* TabViewController.swift in Sources */,
+				E7A04CCD24706C4800ADD847 /* TabBarController.swift in Sources */,
 				E747871724786D1B00606CC8 /* TransitionAnimator.swift in Sources */,
-				E71D551E247E946D008CF42C /* SearchViewController.swift in Sources */,
+				E71D551E247E946D008CF42C /* MusicViewController.swift in Sources */,
 				E775F2AF2471615900185D17 /* Array+UIViewPropertyAnimator.swift in Sources */,
 				E775F2B12471658400185D17 /* UIViewController+Utils.swift in Sources */,
 				E7A04CDD24706C6500ADD847 /* PlayerViewController.swift in Sources */,
 				E7A04CC924706C4800ADD847 /* AppDelegate.swift in Sources */,
-				E7A04CCB24706C4800ADD847 /* SceneDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -310,7 +322,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 76874MD7C6;
-				INFOPLIST_FILE = Drawer/Info.plist;
+				INFOPLIST_FILE = Drawer/Resources/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -328,7 +340,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 76874MD7C6;
-				INFOPLIST_FILE = Drawer/Info.plist;
+				INFOPLIST_FILE = Drawer/Resources/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

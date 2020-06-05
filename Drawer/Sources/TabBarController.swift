@@ -1,5 +1,5 @@
 //
-//  ViewController.swift
+//  TabBarController.swift
 //  Drawer
 //
 //  Created by Maksym Shcheglov on 16/05/2020.
@@ -8,7 +8,7 @@
 
 import UIKit
 
-class TabViewController: UIViewController {
+class TabBarController: UIViewController {
     private let playerViewController = PlayerViewController()
     @IBOutlet var tabBarContainer: UIView!
     @IBOutlet var tabBar: UITabBar!
