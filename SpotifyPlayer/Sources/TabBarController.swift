@@ -1,6 +1,6 @@
 //
 //  TabBarController.swift
-//  Drawer
+//  SpotifyPlayer
 //
 //  Created by Maksym Shcheglov on 16/05/2020.
 //  Copyright © 2020 Maksym Shcheglov. All rights reserved.
@@ -13,7 +13,7 @@ class TabBarController: UIViewController {
     @IBOutlet var tabBarContainer: UIView!
     @IBOutlet var tabBar: UITabBar!
     var shouldHideStatusBar: Bool = false
-    private var animatior: TransitionAnimator!
+    private var coordinator: TransitionCoordinator!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -27,7 +27,7 @@ class TabBarController: UIViewController {
         super.viewDidAppear(animated)
         let additionalBottomInset = tabBar.bounds.height
         playerViewController.additionalSafeAreaInsets = UIEdgeInsets(top: 0, left: 0, bottom: additionalBottomInset, right: 0)
-        animatior = TransitionAnimator(tabBarViewController: self, playerViewController: playerViewController)
+        coordinator = TransitionCoordinator(tabBarViewController: self, playerViewController: playerViewController)
     }
     
     override var prefersStatusBarHidden: Bool {

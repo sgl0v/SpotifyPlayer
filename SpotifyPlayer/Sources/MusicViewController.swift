@@ -1,6 +1,6 @@
 //
 //  MusicViewController.swift
-//  Drawer
+//  SpotifyPlayer
 //
 //  Created by Maksym Shcheglov on 27/05/2020.
 //  Copyright © 2020 Maksym Shcheglov. All rights reserved.
